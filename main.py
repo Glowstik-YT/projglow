@@ -215,7 +215,7 @@ class HelpDropdown(nextcord.ui.View):
             )
         embed = nextcord.Embed(
             title=f"{client.user.name} {select.values[0]} Commands:",
-            description=f"Support Server: [Click Here!](https://nextcord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED[select.values[0]]}",
+            description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED[select.values[0]]}",
         )
         embed.set_footer(
             text=f"Requested by: {interaction.user}",
@@ -237,7 +237,7 @@ async def help(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Help",
-        description=f"Support Server: [Click Here!](https://nextcord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for more information.",
+        description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for more information.",
     )
     embed.set_thumbnail(url=f"{client.user.display_avatar}")
     embed.add_field(
@@ -257,7 +257,7 @@ async def moderation(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Moderation Commands:",
-        description=f"Support Server: [Click Here!](https://nextcord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Moderation']}",
+        description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Moderation']}",
     )
     await ctx.send(embed=embed, view=view)
 
@@ -267,7 +267,7 @@ async def utility(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Utility Commands:",
-        description=f"Support Server: [Click Here!](https://nextcord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Utility']}",
+        description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Utility']}",
     )
     await ctx.send(embed=embed, view=view)
 
@@ -277,7 +277,7 @@ async def music(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Music Commands:",
-        description=f"Support Server: [Click Here!](https://nextcord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Music']}",
+        description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.\n{HELP_EMBED['Music']}",
     )
     await ctx.send(embed=embed, view=view)
 
