@@ -43,7 +43,7 @@ async def chat(ctx, *, responseMSG):
 
 @client.command()
 async def load(ctx, extension):
-    if ctx.author.id == 752020937335111801:
+    if ctx.author.id == 744715959817994371:
         client.load_extension(f"cogs.{extension}")
         await ctx.send("Cog loaded")
     else:
@@ -52,7 +52,7 @@ async def load(ctx, extension):
 
 @client.command()
 async def reload(ctx, extension):
-    if ctx.author.id == 752020937335111801:
+    if ctx.author.id == 744715959817994371:
         client.unload_extension(f"cogs.{extension}")
         await asyncio.sleep(1)
         client.load_extension(f"cogs.{extension}")
@@ -63,7 +63,7 @@ async def reload(ctx, extension):
 
 @client.command()
 async def unload(ctx, extension):
-    if ctx.author.id == 752020937335111801:
+    if ctx.author.id == 744715959817994371:
         client.unload_extension(f"cogs.{extension}")
         await ctx.send("Cog unloaded")
     else:
@@ -72,7 +72,7 @@ async def unload(ctx, extension):
 
 @client.command()
 async def check(ctx, cog_name):
-    if ctx.author.id == 752020937335111801:
+    if ctx.author.id == 744715959817994371:
         try:
             client.load_extension(f"cogs.{cog_name}")
         except commands.ExtensionAlreadyLoaded:
