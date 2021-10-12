@@ -40,7 +40,7 @@ class Eval(commands.Cog):
         description="Evaluates given code",
     )
     async def _eval(self, ctx, *, code: str):
-        if not ctx.author.id == 752020937335111801:
+        if not ctx.author.id == 744715959817994371:
             return
         silent = "-s" in code
 
