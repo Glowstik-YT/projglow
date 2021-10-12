@@ -36,7 +36,8 @@ def apiReq(id, responseMSG):
 @client.command()
 async def chat(ctx, *, responseMSG):
   data = apiReq(ctx.author.id, responseMSG)
-  await ctx.send(data)
+  message = data["cnt"]
+  await ctx.send(message)
 
 @client.command()
 async def load(ctx, extension):
