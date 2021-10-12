@@ -3,7 +3,7 @@
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
 
-First create a fork of the bot by clicking on the fork button in the top right coner.
+First create a fork of the bot by clicking on the fork button in the top right corner.
 
 Then, create a clone by installing [git](https://git-scm.com/) into your pc. After this is done and setup, run 
 ```
@@ -13,7 +13,7 @@ in whatever directory you wish to work on the bot. This will add all of the code
 
 Make sure to hook up your own bot token to test out the bot...
 
-Once this is done and you have added changes you think can benifit the bot, go ahead and run
+Once this is done and you have added changes you think can benefit the bot, go ahead and run
 ```
 git add .
 ```
