@@ -7,7 +7,7 @@ from nextcord.ext import commands
 from global_functions import ban_msg, kick_msg, BOT_USER_ID
 import aiohttp
 from io import BytesIO
-
+import requests
 
 class util(commands.Cog):
     def __init__(self, client):
@@ -180,6 +180,37 @@ class util(commands.Cog):
             command.enabled = not command.enabled
             ternary = "enabled" if command.enabled else "disabled"
             embed = nextcord.Embed(title="Toggle", description=ternary)
+            await ctx.send(embed=embed)
+
+    @commands.command(name="steal",description="Steals an emoji form a server")
+    async def steal(self,ctx, emoji:nextcord.PartialEmoji, *, text=None):
+
+        if ctx.author.guild_permissions.manage_emojis:
+    
+            if text == None:
+                text = emoji.name
+            else:
+                text = text.replace(" ", "_")
+
+            r = requests.get(emoji.url, allow_redirects=True)
+            
+            if emoji.animated == True:
+                open('emoji.gif', 'wb').write(r.content)
+                with open('emoji.gif', 'rb') as f:
+                    z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
+                os.remove("emoji.gif")
+            
+            else:
+                open('emoji.png', 'wb').write(r.content)
+                with open('emoji.png', 'rb') as f:
+                    z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
+                os.remove("emoji.png")
+
+            embed = nextcord.Embed(
+            title = "Success",
+            description = f"Succesfully Cloned {z}",
+            color = nextcord.Color.green()
+            ) 
             await ctx.send(embed=embed)
 
     @commands.command(description="Shows the ping of the bot")
