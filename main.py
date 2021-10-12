@@ -24,7 +24,7 @@ client.loop.create_task(startup())
 def apiReq(id, responseMSG):
   responseMSG = responseMSG.replace(' ', '-')
 
-  url = f"http://api.brainshop.ai/get?bid=160228&key=dQlxkLCXhKxDtvNF&uid={id}&msg={responseMSG}"
+  url = f"http://api.brainshop.ai/get?bid=160228&key=nop&uid={id}&msg={responseMSG}"
 
   response = urlopen(url)
   data = json.loads(response.read())
