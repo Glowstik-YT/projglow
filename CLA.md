@@ -32,7 +32,7 @@ And Use Them For Anything In Discord
 # Chapter 1 - Copyright
 Once Your Code Has Been Contributed You Agree That We Now Withold The Rights To That Code And Keep Them For The Next indefinite Amount Of Time
 
-All Will Be Held Under The Same License That Is Showcased On The [README](/README.md)
+All Will Be Held Under The Same License That Is Showcased On The [LICENSE](/LICENSE)
 
 Copyright(c)2021-present Glowstik
 # Chapter 2 - In Case Of Death
