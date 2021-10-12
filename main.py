@@ -136,7 +136,13 @@ Syntax: {PREFIX}serverinfo
 Description: Displays information about the server.```
 ```yaml
 Syntax: {PREFIX}channelstats [channel]
-Description: Displays information about the channel```""",
+Description: Displays information about the channel```
+```yaml
+Syntax: {PREFIX}stats
+Description: Returns statistics about the bot.```
+```yaml
+Syntax: {PREFIX}ping
+Description: Returns the API latency.```""",
     "Music": f"""
 ```yaml
 Syntax: {PREFIX}join
