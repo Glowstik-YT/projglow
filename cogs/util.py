@@ -4,7 +4,6 @@ import os
 import random
 from datetime import datetime
 from nextcord.ext import commands
-from nextcord.ext.commands.core import command
 from global_functions import ban_msg, kick_msg, BOT_USER_ID
 import aiohttp
 from io import BytesIO
