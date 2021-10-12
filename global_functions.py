@@ -14,7 +14,7 @@ GUILDS = [
     {"server": 824640805884919849},
 ]
 
-TOKEN = "ODY1MTIwNTQ1MTUwMjA1OTYy.YO_YSw.cA6IH-Epc3GAVI2Zb_8mUmnezKs"
+TOKEN = "accidentally leaked my token"
 
 hugs = [
     "https://i.pinimg.com/originals/f2/80/5f/f2805f274471676c96aff2bc9fbedd70.gif",
