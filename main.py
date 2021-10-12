@@ -1,12 +1,14 @@
 import nextcord
 from nextcord.ext import commands
-from global_functions import PREFIX, responses, TOKEN
+from global_functions import PREFIX, responses
 import random, json, os
 from difflib import get_close_matches
 import asyncio
 import aiohttp
 from urllib.request import urlopen
 import json
+# use : `pip install python-decouple==3.4`
+from decouple import config
 
 intents = nextcord.Intents().all()
 client = commands.Bot(command_prefix=str(PREFIX), intents=intents)
@@ -253,4 +255,4 @@ async def on_command_error(ctx, error):
       return
     print(error)
 
-client.run(TOKEN)
+client.run(config("TOKEN"))
