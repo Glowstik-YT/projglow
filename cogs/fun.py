@@ -31,4 +31,26 @@ class Fun(commands.Cog):
     
     response = random.choice(oofed)
     await ctx.reply(response)
-    
+  
+   @commands.command(name="censor", description="Spoil ur message aka litterally using this command to rickroll someone ;-;")
+   async def censor(self, ctx, *, text: str):
+        split = text.split(" ", maxsplit=1)
+        spoilified = ''
+        if split[0] == 'rem' or split[0] == 'remove':
+            await ctx.message.delete()
+            text = split[1]
+        for i in text:
+            spoilified += '||{}||'.format(i)
+        if len(spoilified) + 2 >= 2000:
+            await ctx.send(embed=nextcord.Embed(title='Your message in spoilers exceeds 2000 characters!')
+            return
+        if len(spoilified) <= 4:
+            await ctx.send(embed=nextcord.Embed(title='Your message could not be converted!')
+            return
+        else:
+            e = nextcord.Embed(title="Here is ur message")
+            e.add_field(name="Output message :",value=spoilified)
+            await ctx.send(embed=e)
+                           
+def setup(client):
+  client.add_cog(Fun(client))
