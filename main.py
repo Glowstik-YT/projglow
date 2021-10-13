@@ -3,7 +3,7 @@ import nextcord
 import traceback
 from nextcord.ext import commands
 from global_functions import PREFIX, responses, TOKEN, ERROR_CHANNEL
-import random, json, os
+import random, json, os, sys
 from difflib import get_close_matches
 import asyncio
 import aiohttp
@@ -270,6 +270,29 @@ async def music(ctx):
             value=description,
         )
     await ctx.send(embed=embed, view=view)
+
+
+@client.event
+async def on_error(error, *args, **kwargs):
+    try:
+        error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+        exception = sys.exc_info()
+        exc = "\n".join(
+            traceback.format_exception(exception[0], exception[1], exception[2])
+        )
+        error_em = nextcord.Embed(
+            title=exception[0].__name__,
+            color=nextcord.Color.red(),
+            description=f"**Error in**: `{error}`\n```py\n{exc}```",
+        )
+        await error_channel.send(embed=error_em)
+        print(exc)
+    except:
+        exception = sys.exc_info()
+        exc = "\n".join(
+            traceback.format_exception(exception[0], exception[1], exception[2])
+        )
+        print(exc)
 
 
 @client.event

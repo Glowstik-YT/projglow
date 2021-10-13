@@ -19,10 +19,15 @@ class Music(commands.Cog):
             send = message.channel.send
 
     @commands.Cog.listener()
-    async def on_voice_state_update(member, before, after):
-        if not member.id == BOT_USER_ID:
+    async def on_voice_state_update(self, member, before, after):
+        if after.channel is not None:
             return
-        player = music.get_player(guild_id=member.guild.id)
+        elif (
+            self.client.user in before.channel.members
+            and len(before.channel.members) == 1
+        ):
+            voice_client = before.channel.guild.voice_client
+            await voice_client.disconnect(force=True)
 
     @commands.command(description="Bot joins your voice channel.")
     async def join(self, ctx):
