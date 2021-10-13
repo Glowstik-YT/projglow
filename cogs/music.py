@@ -19,10 +19,15 @@ class Music(commands.Cog):
             send = message.channel.send
 
     @commands.Cog.listener()
-    async def on_voice_state_update(member, before, after):
-        if not member.id == BOT_USER_ID:
+    async def on_voice_state_update(self, member, before, after):
+        if after.channel is not None:
             return
-        player = music.get_player(guild_id=member.guild.id)
+        elif (
+            self.client.user in before.channel.members
+            and len(before.channel.members) == 1
+        ):
+            voice_client = before.channel.guild.voice_client
+            await voice_client.disconnect(force=True)
 
     @commands.command(description="Bot joins your voice channel.")
     async def join(self, ctx):
@@ -101,39 +106,45 @@ class Music(commands.Cog):
     async def pause(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.pause()
-        await ctx.send(f"Paused {song.name}")
+        e = nextcord.Embed(title=f"Paused {song.name}')
+        await ctx.send(embed=e)
 
     @commands.command(description="Resumes the music.")
     async def resume(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.resume()
-        await ctx.send(f"Resumed {song.name}")
+        e = nextcord.Embed(title=f"Resumed {song.name}')
+        await ctx.send(embed=e)
 
     @commands.command(description="Stops the music.")
     async def stop(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         await player.stop()
-        await ctx.send("Stopped")
+        e = nextcord.Embed(title="Stopped the player.")
+        await ctx.send(embed=e)
 
     @commands.command(description="Loops the music.")
     async def loop(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.toggle_song_loop()
         if song.is_looping:
-            await ctx.send(f"Enabled loop for {song.name}")
+            e = nextcord.Embed(title=f"Enabled loop for {song.name}")
+            await ctx.send(embed=e)
         else:
             await ctx.send(f"Disabled loop for {song.name}")
 
     @commands.command(description="Sends the current music queue.")
     async def queue(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
-        await ctx.send(f"{', '.join([song.name for song in player.current_queue()])}")
+        e = nextcord.Embed(title=f"`{', '.join([song.name for song in player.current_queue()])}`")
+        await ctx.send(embed=e)
 
     @commands.command(description="Shows the song now playing.")
     async def np(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = player.now_playing()
-        await ctx.send(song.name)
+        e = nextcord.Embed(title=f"Now Playing : {song.name}")
+        await ctx.send(embed=e)
 
     @commands.command(description="Skips the song")
     async def skip(self, ctx):
@@ -169,7 +180,8 @@ class Music(commands.Cog):
     async def remove(self, ctx, index):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.remove_from_queue(int(index))
-        await ctx.send(f"Removed {song.name} from queue")
+        e = nextcord.Embed(title="Removed {song.name} from queue")
+        await ctx.reply(embed=e)
 
 
 def setup(client):
