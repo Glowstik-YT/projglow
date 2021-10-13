@@ -31,4 +31,4 @@ git push
 ```
 and then go to the github fork you created and click on the contribute button to create a pull request where I will be able to accept or deny the changes!
 # CLA
-Remember That When You Contribute You Agree To The [License](/LICENSE) And [CLA](/CLA)
+Remember That When You Contribute You Agree To The [License](/LICENSE) And [CLA](/CLA.md)
