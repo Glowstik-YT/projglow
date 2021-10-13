@@ -1,6 +1,8 @@
+from logging import exception
 import nextcord
+import traceback
 from nextcord.ext import commands
-from global_functions import PREFIX, responses, TOKEN
+from global_functions import PREFIX, responses, TOKEN, ERROR_CHANNEL
 import random, json, os
 from difflib import get_close_matches
 import asyncio
@@ -9,7 +11,9 @@ from urllib.request import urlopen
 import json
 
 intents = nextcord.Intents().all()
-client = commands.Bot(command_prefix=str(PREFIX), intents=intents, case_insensitive=True)
+client = commands.Bot(
+    command_prefix=str(PREFIX), intents=intents, case_insensitive=True
+)
 client.remove_command("help")
 
 for fn in os.listdir("./cogs"):
@@ -89,6 +93,15 @@ async def check(ctx, cog_name):
 @client.event
 async def on_ready():
     print("Ready")
+    try:
+        channel = await client.fetch_channel(int(ERROR_CHANNEL))
+        print(
+            f"My errors will be logged to https://discord.com/channels/{channel.guild.id}/{channel.id}"
+        )
+    except:
+        print(
+            f"Can't fetch my error channel with id `{ERROR_CHANNEL}`, I can't log the errors ;-;"
+        )
 
 
 @client.event
@@ -97,11 +110,25 @@ async def on_member_join(member):
     await channel.send(f"{member.name} has joined")
 
 
-class HelpDropdown(nextcord.ui.Select):
-    def __init__(self):
+class UrlButton(nextcord.ui.Button):
+    def __init__(self, *, label, url, emoji=None):
+        super().__init__(label=label, url=url, emoji=emoji)
 
+
+class HelpDropdown(nextcord.ui.View):
+    def __init__(self, user):
+        self.user = user
+        super().__init__()
+        self.add_item(
+            UrlButton(label="Support Server", url="https://discord.gg/xA3hBtujg7")
+        )
         # Set the options that will be presented inside the dropdown
-        options = [
+
+    @nextcord.ui.select(
+        placeholder="Choose your help page",
+        min_values=1,
+        max_values=1,
+        options=[
             nextcord.SelectOption(
                 label="Moderation", description=f"`{PREFIX}help moderation`", emoji="⚒️"
             ),
@@ -111,17 +138,18 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(
                 label="Music", description=f"`{PREFIX}help music`", emoji="🎵"
             ),
-        ]
-
-        super().__init__(
-            placeholder="Choose your help page",
-            min_values=1,
-            max_values=1,
-            options=options,
-        )
-
-    async def callback(self, interaction: nextcord.Interaction):
-        if self.values[0] == "Moderation":
+        ],
+    )
+    async def help_callback(self, select, interaction: nextcord.Interaction):
+        if interaction.user.id != self.user.id:
+            em = nextcord.Embed(
+                title="No U",
+                description="This is not for you!",
+                color=nextcord.Color.red(),
+            )
+            return await interaction.response.send_message(embed=em, ephemeral=True)
+        select.placeholder = f"{select.values[0]} Help Page"
+        if select.values[0] == "Moderation":
             embed = nextcord.Embed(
                 title=f"{client.user.name} Moderation Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -134,8 +162,8 @@ class HelpDropdown(nextcord.ui.Select):
                     name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
                     value=description,
                 )
-            await interaction.response.send_message(embed=embed)
-        elif self.values[0] == "Utility":
+            await interaction.response.edit_message(embed=embed, view=self)
+        elif select.values[0] == "Utility":
             embed = nextcord.Embed(
                 title=f"{client.user.name} Utility Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -148,8 +176,8 @@ class HelpDropdown(nextcord.ui.Select):
                     name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
                     value=description,
                 )
-            await interaction.response.send_message(embed=embed)
-        elif self.values[0] == "Music":
+            await interaction.response.edit_message(embed=embed, view=self)
+        elif select.values[0] == "Music":
             embed = nextcord.Embed(
                 title=f"{client.user.name} Music Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -162,19 +190,12 @@ class HelpDropdown(nextcord.ui.Select):
                     name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
                     value=description,
                 )
-            await interaction.response.send_message(embed=embed)
-
-
-class HelpDropdownView(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
-
-        self.add_item(HelpDropdown())
+            await interaction.response.edit_message(embed=embed, view=self)
 
 
 @client.group(invoke_without_command=True)
 async def help(ctx):
-    view = HelpDropdownView()
+    view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Help",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for more information.",
@@ -185,8 +206,9 @@ async def help(ctx):
     )
     embed.add_field(name="Utility:", value=f"`{PREFIX}help utility`", inline=False)
     embed.add_field(name="Music:", value=f"`{PREFIX}help music`", inline=False)
+    dank_lord = await client.fetch_user(758290177919156244)
     embed.set_footer(
-        text=f"Requested by {ctx.author} | Created by: palp#9999",
+        text=f"Requested by {ctx.author} | Created by: palp#9999 | Improved by: {dank_lord}",
         icon_url=f"{ctx.author.display_avatar}",
     )
     await ctx.send(embed=embed, view=view)
@@ -194,7 +216,7 @@ async def help(ctx):
 
 @help.command()
 async def moderation(ctx):
-    view = HelpDropdownView()
+    view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Moderation Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -216,7 +238,7 @@ async def moderation(ctx):
 
 @help.command()
 async def utility(ctx):
-    view = HelpDropdownView()
+    view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Utility Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -234,7 +256,7 @@ async def utility(ctx):
 
 @help.command()
 async def music(ctx):
-    view = HelpDropdownView()
+    view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
         title=f"{client.user.name} Music Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
@@ -333,7 +355,27 @@ async def on_command_error(ctx, error):
         return
     if isinstance(error, nextcord.NotFound) and "Unknown interaction" in str(error):
         return
-    print(error)
+    exception = "\n".join(
+        traceback.format_exception(type(error), error, error.__traceback__)
+    )
+    error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+    error_em = nextcord.Embed(
+        title=error.__class__.__name__,
+        description=f"""
+Message: ```txt\n{ctx.message.content}```
+Command: {ctx.command}
+Error Treaceback: ```py\n{exception}```""",
+        color=nextcord.Color.red(),
+    )
+    await error_channel.send(embed=error_em)
+    em = nextcord.Embed(
+        title="Error ;-;",
+        description=f"There was an error in the command `{ctx.command}`\nThe developers have been informed about the error, please refrain from using this command again!",
+    )
+    await ctx.channel.send(
+        embed=em
+    )  # Doing this so even when slash commands are implemented, the error handler still works just fine.
+    print(exception)
 
 
 client.run(TOKEN)

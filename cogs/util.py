@@ -1,17 +1,25 @@
 import time
 import nextcord
 import os
+import psutil
 import random
 from datetime import datetime
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 from global_functions import ban_msg, kick_msg, BOT_USER_ID
 import aiohttp
 from io import BytesIO
 import requests
 
+us = 0
+um = 0
+uh = 0
+ud = 0
+
+
 class util(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.clientuptime.start()
 
     @commands.command(description="Shows the user's info.")
     async def userinfo(self, ctx, *, user: nextcord.Member = None):  # b'\xfc'
@@ -182,41 +190,88 @@ class util(commands.Cog):
             embed = nextcord.Embed(title="Toggle", description=ternary)
             await ctx.send(embed=embed)
 
-    @commands.command(name="steal",description="Steals an emoji form a server")
-    async def steal(self,ctx, emoji:nextcord.PartialEmoji, *, text=None):
+    @commands.command(name="steal", description="Steals an emoji form a server")
+    async def steal(self, ctx, emoji: nextcord.PartialEmoji, *, text=None):
 
         if ctx.author.guild_permissions.manage_emojis:
-    
+
             if text == None:
                 text = emoji.name
             else:
                 text = text.replace(" ", "_")
 
             r = requests.get(emoji.url, allow_redirects=True)
-            
+
             if emoji.animated == True:
-                open('emoji.gif', 'wb').write(r.content)
-                with open('emoji.gif', 'rb') as f:
+                open("emoji.gif", "wb").write(r.content)
+                with open("emoji.gif", "rb") as f:
                     z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
                 os.remove("emoji.gif")
-            
+
             else:
-                open('emoji.png', 'wb').write(r.content)
-                with open('emoji.png', 'rb') as f:
+                open("emoji.png", "wb").write(r.content)
+                with open("emoji.png", "rb") as f:
                     z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
                 os.remove("emoji.png")
 
             embed = nextcord.Embed(
-            title = "Success",
-            description = f"Succesfully Cloned {z}",
-            color = nextcord.Color.green()
-            ) 
+                title="Success",
+                description=f"Succesfully Cloned {z}",
+                color=nextcord.Color.green(),
+            )
             await ctx.send(embed=embed)
 
     @commands.command(description="Shows the ping of the bot")
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def ping(self, ctx):
-        await ctx.send(f"Ping: {round(self.client.latency * 1000)}ms")
+        em = nextcord.Embed(title="Pong!🏓", colour=nextcord.Colour.random())
+        em.add_field(
+            name="My API Latency is:", value=f"{round(self.client.latency*1000)} ms!"
+        )
+        em.set_footer(
+            text=f"Ping requested by {ctx.author}", icon_url=ctx.author.display_avatar
+        )
+        await ctx.send(embed=em)
+
+    @tasks.loop(seconds=2.0)
+    async def clientuptime(self):
+        global uh, us, um, ud
+        us += 2
+        if us == 60:
+            us = 0
+            um += 1
+            if um == 60:
+                um = 0
+                uh += 1
+                if uh == 24:
+                    uh = 0
+                    ud += 1
+
+    @clientuptime.before_loop
+    async def before_clientuptime(self):
+        print("waiting...")
+        await self.client.wait_until_ready()
+
+    @commands.command(
+        aliases=["statistics", "stat", "statistic"],
+        description="Shows the bot's statistics",
+    )
+    @commands.cooldown(1, 15, commands.BucketType.user)
+    async def stats(self, ctx):
+        global ud, um, uh, us
+        em = nextcord.Embed(title="How long have I been up?")
+        em.add_field(name="Days:", value=ud, inline=False)
+        em.add_field(name="Hours:", value=uh, inline=False)
+        em.add_field(name="Minutes:", value=um, inline=False)
+        em.add_field(name="Seconds:", value=us, inline=False)
+        em.add_field(name="CPU usage:", value=f"{psutil.cpu_percent()}%", inline=False)
+        em.add_field(
+            name="RAM usage:", value=f"{psutil.virtual_memory()[2]}%", inline=False
+        )
+        em.set_footer(
+            text=f"Stats requested by: {ctx.author}", icon_url=ctx.author.display_avatar
+        )
+        await ctx.send(embed=em)
 
 
 def setup(client):
