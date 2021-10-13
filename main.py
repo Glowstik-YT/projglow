@@ -113,7 +113,7 @@ async def on_member_join(member):
 async def on_message(message):
     mention = f'<@!{client.user.id}>'
     if message.content == mention:
-        await ctx.send('Eyoo Nerds my prefix is `>` for help use the command `>help`')
+        await message.channel.send('Eyoo Nerds my prefix is `>` for help use the command `>help`')
     await client.process_commands(message)
 
 
