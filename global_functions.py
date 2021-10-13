@@ -7,14 +7,14 @@ PREFIX = ">"
 MAX_WORK_GAIN = 2000
 WEEKLY_AMT = 5000
 BOT_USER_ID = "832712190590844968"
-
+ERROR_CHANNEL = "error channel id here"
 GUILDS = [
     {"server": 815976334907801601},
     {"server": 803080452968808468},
     {"server": 824640805884919849},
 ]
 
-TOKEN = "enter token here"
+TOKEN = "token here"
 # make sure to remove it before you push
 
 
