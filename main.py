@@ -95,6 +95,13 @@ async def on_ready():
 async def on_member_join(member):
     channel = await client.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
+    
+@client.event
+async def on_message(message):
+    mention = f'<@!{client.user.id}>'
+    if message.content == mention:
+        await ctx.send('Eyoo Nerds my prefix is `>` for help use the command `>help`')
+    await client.process_commands(message)
 
 
 class HelpDropdown(nextcord.ui.Select):
