@@ -1,4 +1,5 @@
 # Project Glow
+![](https://discord.com/api/guilds/794739329956053063/embed.png)
 
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
