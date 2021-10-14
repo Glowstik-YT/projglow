@@ -106,14 +106,14 @@ class Music(commands.Cog):
     async def pause(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.pause()
-        e = nextcord.Embed(title=f"Paused {song.name}')
+        e = nextcord.Embed(title=f"Paused {song.name}")
         await ctx.send(embed=e)
 
     @commands.command(description="Resumes the music.")
     async def resume(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
         song = await player.resume()
-        e = nextcord.Embed(title=f"Resumed {song.name}')
+        e = nextcord.Embed(title=f"Resumed {song.name}")
         await ctx.send(embed=e)
 
     @commands.command(description="Stops the music.")
@@ -136,7 +136,9 @@ class Music(commands.Cog):
     @commands.command(description="Sends the current music queue.")
     async def queue(self, ctx):
         player = music.get_player(guild_id=ctx.guild.id)
-        e = nextcord.Embed(title=f"`{', '.join([song.name for song in player.current_queue()])}`")
+        e = nextcord.Embed(
+            title=f"`{', '.join([song.name for song in player.current_queue()])}`"
+        )
         await ctx.send(embed=e)
 
     @commands.command(description="Shows the song now playing.")
