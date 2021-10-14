@@ -9,6 +9,276 @@ from global_functions import ban_msg, kick_msg, BOT_USER_ID
 import aiohttp
 from io import BytesIO
 import requests
+from nextcord import ButtonStyle
+from nextcord.ui import button, View, Button
+
+green_button_style = ButtonStyle.success
+grey_button_style = ButtonStyle.secondary
+blue_button_style = ButtonStyle.primary
+red_button_style = ButtonStyle.danger
+
+
+class CalculatorButtons(View):
+    def __init__(self, owner, embed, message):
+        self.embed = embed
+        self.owner = owner
+        self.message = message
+        self.expression = ""
+        super().__init__(timeout=300.0)
+
+    @button(label="1", style=grey_button_style, row=1)
+    async def one_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="2", style=grey_button_style, row=1)
+    async def two_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="3", style=grey_button_style, row=1)
+    async def three_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="4", style=grey_button_style, row=2)
+    async def four_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="5", style=grey_button_style, row=2)
+    async def five_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="6", style=grey_button_style, row=2)
+    async def six_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="7", style=grey_button_style, row=3)
+    async def seven_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="8", style=grey_button_style, row=3)
+    async def eight_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="9", style=grey_button_style, row=3)
+    async def nine_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="0", style=grey_button_style, row=4)
+    async def zero_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="00", style=grey_button_style, row=4)
+    async def double_zero_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label=".", style=grey_button_style, row=4)
+    async def dot_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="x", style=blue_button_style, row=1, custom_id="*")
+    async def multiplication_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="÷", style=blue_button_style, row=2, custom_id="/")
+    async def division_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="+", style=blue_button_style, row=3)
+    async def addition_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="-", style=blue_button_style, row=4)
+    async def subtraction_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression += button.label
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="←", style=red_button_style, row=1)
+    async def back_space_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression = self.expression[:-1]
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="Clear", style=red_button_style, row=2)
+    async def clear_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        self.expression = ""
+        self.embed.description = self.expression
+        await interaction.response.edit_message(embed=self.embed)
+
+    @button(label="Exit", style=red_button_style, row=3)
+    async def exit_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        for child in self.children:
+            child.disabled = True
+        embed = nextcord.Embed(title="Abandoned Calculator", color=nextcord.Color.red())
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @button(label="=", style=green_button_style, row=4)
+    async def equal_to_callback(self, button, interaction: nextcord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                embed=nextcord.Embed(
+                    title="No U", description="This is not your calculator!"
+                )
+            )
+        expression = self.expression
+        expression = expression.replace("÷", "/").replace("x", "8")
+        try:
+            result = str(eval(expression))
+            self.expression = result
+        except:
+            result = "An Error Occured ;-;"
+        self.embed.description = result
+        await interaction.response.edit_message(embed=self.embed)
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        embed = nextcord.Embed(title="Time Up", color=nextcord.Color.red())
+        await self.message.edit(embed=embed, view=self)
+
 
 us = 0
 um = 0
@@ -20,6 +290,17 @@ class util(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.clientuptime.start()
+
+    @commands.command(description="A handy Calculator!", aliases=["calc"])
+    async def calculator(self, ctx):
+        message = await ctx.send("Loading Calculator")
+        embed = nextcord.Embed(
+            title=f"{ctx.author}'s Calculator",
+            color=nextcord.Color.green(),
+            description="This is the start of the calculator!",
+        )
+        view = CalculatorButtons(ctx.author, embed, message)
+        await message.edit(content=None, embed=embed, view=view)
 
     @commands.command(description="Shows the user's info.")
     async def userinfo(self, ctx, *, user: nextcord.Member = None):  # b'\xfc'
@@ -40,15 +321,13 @@ class util(commands.Cog):
                 value=role_string,
                 inline=False,
             )
-        perm_string = ", ".join(
-            [
-                str(p[0]).replace("_", " ").title()
-                for p in user.guild_permissions
-                if p[1]
-            ]
-        )
+        perm_paginator = commands.Paginator(prefix="```diff", max_size=1000)
+        for p in user.guild_permissions:
+            perm_paginator.add_line(
+                f"{'+' if p[1] else '-'} {str(p[0]).replace('_', ' ').title()}"
+            )
         embed.add_field(
-            name="Guild permissions", value=f"`{perm_string}`", inline=False
+            name="Guild permissions", value=f"{perm_paginator.pages[0]}", inline=False
         )
         embed.set_footer(
             text=self.client.user.name, icon_url=self.client.user.display_avatar

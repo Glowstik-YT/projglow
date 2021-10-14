@@ -1,8 +1,16 @@
 from logging import exception
 import nextcord
 import traceback
-from nextcord.ext import commands
-from global_functions import PREFIX, responses, TOKEN, ERROR_CHANNEL
+import datetime
+from nextcord.ext import commands, tasks
+from global_functions import (
+    PREFIX,
+    responses,
+    TOKEN,
+    ERROR_CHANNELS,
+    UPDATE_CHANNEL,
+    MEMBERCOUNT_CHANNEL,
+)
 import random, json, os, sys
 from difflib import get_close_matches
 import asyncio
@@ -19,6 +27,32 @@ client.remove_command("help")
 for fn in os.listdir("./cogs"):
     if fn.endswith(".py") and fn != "global_functions.py":
         client.load_extension(f"cogs.{fn[:-3]}")
+
+
+@tasks.loop(minutes=2.5)
+async def member_count():
+    try:
+        member_count_channel = await client.fetch_channel(MEMBERCOUNT_CHANNEL)
+    except:
+        return print(f"Error!\nThe member count channel id is invalid!")
+    if not isinstance(member_count_channel, nextcord.VoiceChannel):
+        return print(
+            f"Error!\nThe member count channel id that you gave is not a voice channel!"
+        )
+    glowstiks_git_repo = client.get_guild(794739329956053063)
+
+    for x in (member_count_channel_name := member_count_channel.name.split(" ")):
+        if x.isdigit():
+            member_count_channel_name[member_count_channel_name.index(x)] = str(
+                glowstiks_git_repo.member_count
+            )
+    try:
+        await member_count_channel.edit(
+            name=" ".join(member_count_channel_name),
+            reason="Automated Member Count Rename",
+        )
+    except:
+        return print("Error in renaming the member channel ;-;")
 
 
 async def startup():
@@ -92,28 +126,50 @@ async def check(ctx, cog_name):
 
 @client.event
 async def on_ready():
+    member_count.start()
     print("Ready")
     try:
-        channel = await client.fetch_channel(int(ERROR_CHANNEL))
-        print(
-            f"My errors will be logged to https://discord.com/channels/{channel.guild.id}/{channel.id}"
+        update_channel = await client.fetch_channel(int(UPDATE_CHANNEL))
+        embed = nextcord.Embed(
+            title="I am online!",
+            description=f"I got online at {nextcord.utils.format_dt(nextcord.utils.utcnow(), 'F')}",
         )
+        await update_channel.send(embed=embed)
     except:
         print(
-            f"Can't fetch my error channel with id `{ERROR_CHANNEL}`, I can't log the errors ;-;"
+            f"Can't Fetch The Update Channel!\nMake Sure That You Kept The Right ID, If You Did Try And Contact ||Dank Lord||#9919"
         )
+    error_channels = []
+    error_in_loading_channel = []
+    for ERROR_CHANNEL in ERROR_CHANNELS:
+        try:
+            channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            error_channels.append(
+                f"https://discord.com/channels/{channel.guild.id}/{channel.id}"
+            )
+        except:
+            error_in_loading_channel.append(str(ERROR_CHANNEL))
+    error_channels = ", ".join(error_channels)
+    print(f"My errors will be logged to {error_channels}")
+    smthing = "\n".join(error_in_loading_channel)
+    print(
+        f"Can't fetch my error channel with id `{smthing}`, I can't log the errors ;-;"
+    ) if len(error_in_loading_channel) > 0 else ...
 
 
 @client.event
 async def on_member_join(member):
     channel = await client.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
-    
+
+
 @client.event
 async def on_message(message):
-    mention = f'<@!{client.user.id}>'
+    mention = f"<@!{client.user.id}>"
     if message.content == mention:
-        await message.channel.send('Eyoo Nerds my prefix is `>` for help use the command `>help`')
+        await message.channel.send(
+            "Eyoo Nerds my prefix is `>` for help use the command `>help`"
+        )
     await client.process_commands(message)
 
 
@@ -282,17 +338,21 @@ async def music(ctx):
 @client.event
 async def on_error(error, *args, **kwargs):
     try:
-        error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
-        exception = sys.exc_info()
-        exc = "\n".join(
-            traceback.format_exception(exception[0], exception[1], exception[2])
-        )
-        error_em = nextcord.Embed(
-            title=exception[0].__name__,
-            color=nextcord.Color.red(),
-            description=f"**Error in**: `{error}`\n```py\n{exc}```",
-        )
-        await error_channel.send(embed=error_em)
+        for ERROR_CHANNEL in ERROR_CHANNELS:
+            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            exception = sys.exc_info()
+            exc = "\n".join(
+                traceback.format_exception(exception[0], exception[1], exception[2])
+            )
+            error_em = nextcord.Embed(
+                title=exception[0].__name__,
+                color=nextcord.Color.red(),
+                description=f"**Error in**: `{error}`\n```py\n{exc}```",
+            )
+            try:
+                await error_channel.send(embed=error_em)
+            except:
+                ...
         print(exc)
     except:
         exception = sys.exc_info()
@@ -388,16 +448,25 @@ async def on_command_error(ctx, error):
     exception = "\n".join(
         traceback.format_exception(type(error), error, error.__traceback__)
     )
-    error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
-    error_em = nextcord.Embed(
-        title=error.__class__.__name__,
-        description=f"""
+    for ERROR_CHANNEL in ERROR_CHANNELS:
+        try:
+            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+        except:
+            print(f"Can't Fetch The Error Channel With ID: `{ERROR_CHANNEL}`")
+        error_em = nextcord.Embed(
+            title=error.__class__.__name__,
+            description=f"""
 Message: ```txt\n{ctx.message.content}```
 Command: {ctx.command}
 Error Treaceback: ```py\n{exception}```""",
-        color=nextcord.Color.red(),
-    )
-    await error_channel.send(embed=error_em)
+            color=nextcord.Color.red(),
+        )
+        try:
+            await error_channel.send(embed=error_em)
+        except:
+            print(
+                f"Was Not Able To Send The Error In The Channel With ID: `{error_channel.id}`"
+            )
     em = nextcord.Embed(
         title="Error ;-;",
         description=f"There was an error in the command `{ctx.command}`\nThe developers have been informed about the error, please refrain from using this command again!",
