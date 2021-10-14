@@ -1,4 +1,7 @@
+![]{assets/projglowbanner.png)
+
 # Project Glow
+
 
 ![](https://discord.com/api/guilds/794739329956053063/embed.png)
 ![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow)
