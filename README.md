@@ -1,4 +1,4 @@
-![]{assets/projglowbanner.png)
+![](assets/projglowbanner.png)
 
 # Project Glow
 
