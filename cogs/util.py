@@ -321,15 +321,13 @@ class util(commands.Cog):
                 value=role_string,
                 inline=False,
             )
-        perm_string = ", ".join(
-            [
-                str(p[0]).replace("_", " ").title()
-                for p in user.guild_permissions
-                if p[1]
-            ]
-        )
+        perm_paginator = commands.Paginator(prefix="```diff", max_size=1000)
+        for p in user.guild_permissions:
+            perm_paginator.add_line(
+                f"{'+' if p[1] else '-'} {str(p[0]).replace('_', ' ').title()}"
+            )
         embed.add_field(
-            name="Guild permissions", value=f"`{perm_string}`", inline=False
+            name="Guild permissions", value=f"{perm_paginator.pages[0]}", inline=False
         )
         embed.set_footer(
             text=self.client.user.name, icon_url=self.client.user.display_avatar
