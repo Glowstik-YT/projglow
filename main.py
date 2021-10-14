@@ -2,8 +2,15 @@ from logging import exception
 import nextcord
 import traceback
 import datetime
-from nextcord.ext import commands
-from global_functions import PREFIX, responses, TOKEN, ERROR_CHANNELS, UPDATE_CHANNEL
+from nextcord.ext import commands, tasks
+from global_functions import (
+    PREFIX,
+    responses,
+    TOKEN,
+    ERROR_CHANNELS,
+    UPDATE_CHANNEL,
+    MEMBERCOUNT_CHANNEL,
+)
 import random, json, os, sys
 from difflib import get_close_matches
 import asyncio
@@ -20,6 +27,32 @@ client.remove_command("help")
 for fn in os.listdir("./cogs"):
     if fn.endswith(".py") and fn != "global_functions.py":
         client.load_extension(f"cogs.{fn[:-3]}")
+
+
+@tasks.loop(minutes=2.5)
+async def member_count():
+    try:
+        member_count_channel = await client.fetch_channel(MEMBERCOUNT_CHANNEL)
+    except:
+        return print(f"Error!\nThe member count channel id is invalid!")
+    if not isinstance(member_count_channel, nextcord.VoiceChannel):
+        return print(
+            f"Error!\nThe member count channel id that you gave is not a voice channel!"
+        )
+    glowstiks_git_repo = client.get_guild(794739329956053063)
+
+    for x in (member_count_channel_name := member_count_channel.name.split(" ")):
+        if x.isdigit():
+            member_count_channel_name[member_count_channel_name.index(x)] = str(
+                glowstiks_git_repo.member_count
+            )
+    try:
+        await member_count_channel.edit(
+            name=" ".join(member_count_channel_name),
+            reason="Automated Member Count Rename",
+        )
+    except:
+        return print("Error in renaming the member channel ;-;")
 
 
 async def startup():
@@ -93,6 +126,7 @@ async def check(ctx, cog_name):
 
 @client.event
 async def on_ready():
+    member_count.start()
     print("Ready")
     try:
         update_channel = await client.fetch_channel(int(UPDATE_CHANNEL))
