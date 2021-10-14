@@ -6,6 +6,7 @@
 ![](https://discord.com/api/guilds/794739329956053063/embed.png)
 ![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow)
 ![](https://img.shields.io/github/last-commit/glowstik-yt/projglow)
+[![Powered by Nextcord](https://custom-icon-badges.herokuapp.com/badge/-Powered%20by%20Nextcord-0d1620?logo=nextcord)](https://github.com/nextcord/nextcord "Powered by Nextcord Python API Wrapper")
 
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
