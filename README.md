@@ -3,11 +3,12 @@
 # Project Glow
 
 
-![](https://discord.com/api/guilds/794739329956053063/embed.png)
+[![](https://discord.com/api/guilds/794739329956053063/embed.png)](https://discord.gg/bZJYdBXGjr)
 ![](https://custom-icon-badges.herokuapp.com/github/commit-activity/w/glowstik-yt/projglow?style=plastic&logo=github)
 ![](https://custom-icon-badges.herokuapp.com/github/last-commit/glowstik-yt/projglow?style=plastic&logo=github)
 [![Powered by Nextcord](https://custom-icon-badges.herokuapp.com/badge/-Powered%20by%20Nextcord-0d1620?logo=nextcord)](https://github.com/nextcord/nextcord "Powered by Nextcord Python API Wrapper")
-![](https://custom-icon-badges.herokuapp.com/bitbucket/issues/Glowstik-YT/projglow?style=plastic&logo=github)
+[![](https://custom-icon-badges.herokuapp.com/bitbucket/issues/Glowstik-YT/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow/issues)
+[![](https://custom-icon-badges.herokuapp.com/github/stars/glowstik-yt/projglow?logo=star)](https://github.com/Glowstik-YT/projglow/stargazers)
 
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
