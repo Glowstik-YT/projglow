@@ -1,3 +1,4 @@
+#This Code Is Under The MPL-2.0 License
 import json
 
 # CONTANTS

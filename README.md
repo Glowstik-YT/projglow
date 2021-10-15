@@ -3,11 +3,12 @@
 # Project Glow
 
 
-![](https://discord.com/api/guilds/794739329956053063/embed.png)
-![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow)
-![](https://img.shields.io/github/last-commit/glowstik-yt/projglow)
-[![Powered by Nextcord](https://custom-icon-badges.herokuapp.com/badge/-Powered%20by%20Nextcord-0d1620?logo=nextcord)](https://github.com/nextcord/nextcord "Powered by Nextcord Python API Wrapper")
-![](https://img.shields.io/bitbucket/issues/Glowstik-YT/projglow)
+[![](https://discord.com/api/guilds/794739329956053063/embed.png)](https://discord.gg/bZJYdBXGjr)
+[![](https://custom-icon-badges.herokuapp.com/github/commit-activity/w/glowstik-yt/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow)
+[![](https://custom-icon-badges.herokuapp.com/github/last-commit/glowstik-yt/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow)
+[![Powered by Nextcord](https://img.shields.io/github/license/Glowstik-YT/projglow?style=plastic)](LICENSE)
+[![](https://custom-icon-badges.herokuapp.com/bitbucket/issues/Glowstik-YT/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow/issues)
+[![](https://img.shields.io/github/issues-pr-raw/Glowstik-YT/projglow?color=gree&label=Pull%20Requests&style=plastic)](https://github.com/Glowstik-YT/projglow/pulls)
 
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
@@ -44,4 +45,4 @@ Remember That When You Contribute You Agree To The [License](/LICENSE) And [CLA]
 
 # Communication
 
-If you need support for the bot please join [Project Glow Supoprt](https://discord.gg/bpvrRDWEQV) if you want to chat with other devs join [Glowstiks Git Repo](https://discord.gg/hJDsAVkkuU)
+If you need support for the bot please join the [Project Glow Support Server](https://discord.gg/bpvrRDWEQV) if you want to chat with other devs join [Glowstiks Git Repo](https://discord.gg/hJDsAVkkuU)
