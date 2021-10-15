@@ -6,6 +6,8 @@
 ![](https://discord.com/api/guilds/794739329956053063/embed.png)
 ![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow)
 ![](https://img.shields.io/github/last-commit/glowstik-yt/projglow)
+[![Powered by Nextcord](https://custom-icon-badges.herokuapp.com/badge/-Powered%20by%20Nextcord-0d1620?logo=nextcord)](https://github.com/nextcord/nextcord "Powered by Nextcord Python API Wrapper")
+![](https://img.shields.io/bitbucket/issues/Glowstik-YT/projglow)
 
 Greetings, I see you have stumbled upon project glow. Project glow is an open source bot worked on by many people to create a 
 good and safe moderation bot for all. Adding to the bot is simple!
@@ -39,3 +41,7 @@ git push
 and then go to the github fork you created and click on the contribute button to create a pull request where I will be able to accept or deny the changes!
 # CLA
 Remember That When You Contribute You Agree To The [License](/LICENSE) And [CLA](/CLA.md)
+
+# Communication
+
+If you need support for the bot please join [Project Glow Supoprt](https://discord.gg/bpvrRDWEQV) if you want to chat with other devs join [Glowstiks Git Repo](https://discord.gg/hJDsAVkkuU)
