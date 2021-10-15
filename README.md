@@ -44,4 +44,4 @@ Remember That When You Contribute You Agree To The [License](/LICENSE) And [CLA]
 
 # Communication
 
-If you need support for the bot please join [Project Glow Supoprt](https://discord.gg/bpvrRDWEQV) if you want to chat with other devs join [Glowstiks Git Repo](https://discord.gg/hJDsAVkkuU)
+If you need support for the bot please join the [Project Glow Support Server](https://discord.gg/bpvrRDWEQV) if you want to chat with other devs join [Glowstiks Git Repo](https://discord.gg/hJDsAVkkuU)
