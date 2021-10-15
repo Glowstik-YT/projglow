@@ -6,7 +6,7 @@
 [![](https://discord.com/api/guilds/794739329956053063/embed.png)](https://discord.gg/bZJYdBXGjr)
 [![](https://custom-icon-badges.herokuapp.com/github/commit-activity/w/glowstik-yt/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow)
 [![](https://custom-icon-badges.herokuapp.com/github/last-commit/glowstik-yt/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow)
-[![Powered by Nextcord](https://img.shields.io/github/license/Glowstik-YT/projglow?style=plastic)]("License")
+[![Powered by Nextcord](https://img.shields.io/github/license/Glowstik-YT/projglow?style=plastic)](License)
 [![](https://custom-icon-badges.herokuapp.com/bitbucket/issues/Glowstik-YT/projglow?style=plastic&logo=github)](https://github.com/Glowstik-YT/projglow/issues)
 [![](https://img.shields.io/github/issues-pr-raw/Glowstik-YT/projglow?color=gree&label=Pull%20Requests&style=plastic)](https://github.com/Glowstik-YT/projglow/pulls)
 
