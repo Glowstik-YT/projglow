@@ -159,7 +159,7 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    channel = await client.get_channel(794745011128369182)
+    channel = client.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
 
 
