@@ -66,6 +66,10 @@ ban_msg = [
     "annoyed some staff and got banned",
     "wanted to see what would happen if you broke rules and got banned",
     "tried to dodge the ban hammer :rofl:",
+    "was blown up by Creeper"
+    "was killed by [Intentional Game Design]"
+    "tried to swim in lava"
+    "experienced kinetic energy"
 ]
 
 
@@ -185,11 +189,8 @@ responses = [
 
 shop_display = [
     {"name": "Laptop", "price": "``$5,000``", "description": "Used for posting memes"},
-    {
-        "name": "Phone",
-        "price": "``$1,000``",
-        "description": "Bored? Well look at some memes!",
-    },
+    {"name": "Phone", "price": "``$1,000``", "description": "Bored? Well look at some memes!"},
+    {"name": "Nothing", "price": "``$500,000``", "description": "It's literally nothing, why would you waste your money"},
     {"name": "Glow", "price": "``$100,000``", "description": "FLEX"},
 ]
 
@@ -198,6 +199,7 @@ shop_buy = [
     {"name": "laptop", "nickname": "lap", "price": 5_000, "sell": 2_500},
     {"name": "phone", "nickname": "cell", "price": 1_000, "sell": 500},
     {"name": "glow", "nickname": "glow", "price": 100_000, "sell": 10_000},
+    {"name": "nothing", "nickname": "air", "price": 500_000, "sell": 250_000}
 ]
 
 
