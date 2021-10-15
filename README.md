@@ -4,8 +4,8 @@
 
 
 ![](https://discord.com/api/guilds/794739329956053063/embed.png)
-![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow)
-![](https://img.shields.io/github/last-commit/glowstik-yt/projglow)
+![](https://img.shields.io/github/commit-activity/w/glowstik-yt/projglow?style=plastic)
+![](https://img.shields.io/github/last-commit/glowstik-yt/projglow?style=plastic)
 [![Powered by Nextcord](https://custom-icon-badges.herokuapp.com/badge/-Powered%20by%20Nextcord-0d1620?logo=nextcord)](https://github.com/nextcord/nextcord "Powered by Nextcord Python API Wrapper")
 ![](https://img.shields.io/bitbucket/issues/Glowstik-YT/projglow)
 
