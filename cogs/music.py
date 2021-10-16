@@ -435,7 +435,10 @@ class Music(commands.Cog):
             return await ctx.send(embed=em1)
         await ctx.voice_client.disconnect()
         player = music.get_player(guild_id=ctx.guild.id)
-        await player.delete()
+        try:
+            await player.delete()
+        except:
+            ...
         em1 = nextcord.Embed(
             title="Left Voice!", description="Successfully left your voice channel"
         )

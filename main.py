@@ -790,8 +790,14 @@ async def music(ctx):
 @client.event
 async def on_error(error, *args, **kwargs):
     try:
+        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        formatted_args = f"```py\n{formatted_args}```"
         for ERROR_CHANNEL in ERROR_CHANNELS:
-            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            try:
+                error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            except:
+                print(f"Can't log errors to the channel with id `{ERROR_CHANNEL}`")
+                continue
             exception = sys.exc_info()
             exc = "\n".join(
                 traceback.format_exception(exception[0], exception[1], exception[2])
@@ -799,7 +805,7 @@ async def on_error(error, *args, **kwargs):
             error_em = nextcord.Embed(
                 title=exception[0].__name__,
                 color=nextcord.Color.red(),
-                description=f"**Error in**: `{error}`\n```py\n{exc}```",
+                description=f"**Error in**: `{error}`\n```py\n{exc}```\n{f'Args: {formatted_args}' if len(args) > 0 else ''}\n{f'Kwargs: {kwargs}' if len(kwargs) > 0 else ''}",
             )
             try:
                 await error_channel.send(embed=error_em)
@@ -811,7 +817,8 @@ async def on_error(error, *args, **kwargs):
         exc = "\n".join(
             traceback.format_exception(exception[0], exception[1], exception[2])
         )
-        print(exc)
+        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        print(exc, "Args: \n"+formatted_args)
 
 
 @client.event
