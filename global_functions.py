@@ -67,10 +67,12 @@ ban_msg = [
     "annoyed some staff and got banned",
     "wanted to see what would happen if you broke rules and got banned",
     "tried to dodge the ban hammer :rofl:",
-    "was blown up by Creeper"
-    "was killed by [Intentional Game Design]"
-    "tried to swim in lava"
-    "experienced kinetic energy"
+    "was blown up by Creeper",
+    "was killed by [Intentional Game Design]",
+    "tried to swim in lava",
+    "experienced kinetic energy",
+    "tried to hard",
+    "tried to play tag with the ban hammer"
 ]
 
 
@@ -78,9 +80,10 @@ kick_msg = [
     "got booted and got kicked?",
     "got kicked, imagine getting kicked...",
     "got kicked... I ran out of jokes",
+    "roleplayed as a soccer ball"
 ]
 
-work_list = ["Discord", "Microsoft", "Apple", "a Police Station", "Youtube", "Google"]
+work_list = ["Discord", "Microsoft", "Apple", "a Police Station", "Youtube", "Google","Glow's Edtitor"]
 
 options = [
     "uber",
