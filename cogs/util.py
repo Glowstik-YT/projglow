@@ -587,7 +587,7 @@ class util(commands.Cog):
 
     @commands.command(description="A handy Calculator!", aliases=["calc"])
     async def calculator(self, ctx):
-        message = await ctx.send("Loading Calculator")
+        message = await ctx.send("Loading Calculator...")
         embed = nextcord.Embed(
             title=f"{ctx.author}'s Calculator",
             color=nextcord.Color.green(),
