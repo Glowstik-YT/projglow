@@ -886,7 +886,7 @@ class util(commands.Cog):
         )
         await ctx.send(embed=em)
 
-    @commands.command(description="Creates a suggestion in #suggestion")
+    @commands.command(name="suggest", description="Creates a suggestion in #suggestion")
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def suggest(self, ctx, suggestion):
         await ctx.channel.purge(limit = 1)
