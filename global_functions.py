@@ -17,6 +17,8 @@ GUILDS = [
     {"server": 824640805884919849},
 ]
 
+EMOJIS_TO_USE_FOR_CALCULATOR = {"1":"1️⃣", "2":"2️⃣", "3":"3️⃣", "4":"4️⃣", "5":"5️⃣", "6":"6️⃣", "7":"7️⃣", "8":"8️⃣", "9":"9️⃣", "0":"0️⃣", "+":"➕", "-":"➖","x":"✖️","÷":"➗",".":"🌑"}
+
 TOKEN = ""
 # make sure to remove it before you push
 
@@ -212,4 +214,17 @@ def fetch_data(fn):
 
 def write_data(fn, data):
     with open("json/" + str(fn), "w") as f:
+        json.dump(data, f, indent=4)
+
+def read_database():
+    try:
+        with open("database.json") as f:
+            database=json.load(f)
+    except:
+        write_database(data={})
+        database={}
+    return database
+
+def write_database(*, data):
+    with open("database.json","w+") as f:
         json.dump(data, f, indent=4)

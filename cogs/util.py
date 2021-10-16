@@ -379,7 +379,7 @@ import psutil
 import random
 from datetime import datetime
 from nextcord.ext import commands, tasks
-from global_functions import ban_msg, kick_msg, BOT_USER_ID
+from global_functions import ban_msg, kick_msg, BOT_USER_ID, EMOJIS_TO_USE_FOR_CALCULATOR as etufc
 import aiohttp
 from io import BytesIO
 import requests
@@ -400,131 +400,131 @@ class CalculatorButtons(View):
         self.expression = ""
         super().__init__(timeout=300.0)
 
-    @button(label="1", style=grey_button_style, row=1)
+    @button(emoji=etufc['1'], style=grey_button_style, row=1)
     async def one_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "1"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="2", style=grey_button_style, row=1)
+    @button(emoji=etufc['2'], style=grey_button_style, row=1)
     async def two_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "2"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="3", style=grey_button_style, row=1)
+    @button(emoji=etufc['3'], style=grey_button_style, row=1)
     async def three_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "3"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="4", style=grey_button_style, row=2)
+    @button(emoji=etufc['4'], style=grey_button_style, row=2)
     async def four_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "4"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="5", style=grey_button_style, row=2)
+    @button(emoji=etufc['5'], style=grey_button_style, row=2)
     async def five_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "5"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="6", style=grey_button_style, row=2)
+    @button(emoji=etufc['6'], style=grey_button_style, row=2)
     async def six_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "6"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="7", style=grey_button_style, row=3)
+    @button(emoji=etufc['7'], style=grey_button_style, row=3)
     async def seven_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "7"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="8", style=grey_button_style, row=3)
+    @button(emoji=etufc['8'], style=grey_button_style, row=3)
     async def eight_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "8"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="9", style=grey_button_style, row=3)
+    @button(emoji=etufc['9'], style=grey_button_style, row=3)
     async def nine_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "9"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="0", style=grey_button_style, row=4)
+    @button(emoji=etufc['0'], style=grey_button_style, row=4)
     async def zero_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "0"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="00", style=grey_button_style, row=4)
+    @button(label="00 ", style=grey_button_style, row=4)
     async def double_zero_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "00"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label=".", style=grey_button_style, row=4)
+    @button(emoji=etufc['.'], style=grey_button_style, row=4)
     async def dot_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "."
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="x", style=blue_button_style, row=1, custom_id="*")
+    @button(emoji=etufc['x'], style=blue_button_style, row=1, custom_id="*")
     async def multiplication_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "x"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="÷", style=blue_button_style, row=2, custom_id="/")
+    @button(emoji=etufc['÷'], style=blue_button_style, row=2, custom_id="/")
     async def division_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "÷"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="+", style=blue_button_style, row=3)
+    @button(emoji=etufc['+'], style=blue_button_style, row=3)
     async def addition_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "+"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
-    @button(label="-", style=blue_button_style, row=4)
+    @button(emoji=etufc['-'], style=blue_button_style, row=4)
     async def subtraction_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
             return
-        self.expression += button.label
+        self.expression += "-"
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
 
@@ -541,7 +541,7 @@ class CalculatorButtons(View):
         if interaction.user.id != self.owner.id:
             return
         self.expression = ""
-        self.embed.description = self.expression
+        self.embed.description = "Cleared Calculator"
         await interaction.response.edit_message(embed=self.embed)
 
     @button(label="Exit", style=red_button_style, row=3)
@@ -558,7 +558,7 @@ class CalculatorButtons(View):
         if interaction.user.id != self.owner.id:
             return
         expression = self.expression
-        expression = expression.replace("÷", "/").replace("x", "8")
+        expression = expression.replace("÷", "/").replace("x", "*")
         try:
             result = str(eval(expression))
             self.expression = result

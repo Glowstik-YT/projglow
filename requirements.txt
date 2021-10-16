@@ -1,3 +1,4 @@
 nextcord
 DiscordUtils[voice]
 psutil
+requests
