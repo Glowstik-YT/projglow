@@ -396,8 +396,7 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         if after.channel is not None:
             return
-        else:
-            self.client.user in before.channel.members and len(before.channel.members) == 1
+        elif self.client.user in before.channel.members and len(before.channel.members) == 1:
             voice_client = before.channel.guild.voice_client
             await voice_client.disconnect(force=True)
 
