@@ -787,7 +787,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         missing = [
             perm.replace("_", " ").replace("guild", "server").title()
-            for perm in error.missing_perms
+            for perm in error.missing_permissions
         ]
         if len(missing) > 2:
             fmt = "{}, and {}".format("**, **".join(missing[:-1]), missing[-1])
