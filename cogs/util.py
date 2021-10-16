@@ -403,11 +403,7 @@ class CalculatorButtons(View):
     @button(label="1", style=grey_button_style, row=1)
     async def one_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -415,11 +411,7 @@ class CalculatorButtons(View):
     @button(label="2", style=grey_button_style, row=1)
     async def two_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -427,11 +419,7 @@ class CalculatorButtons(View):
     @button(label="3", style=grey_button_style, row=1)
     async def three_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -439,11 +427,7 @@ class CalculatorButtons(View):
     @button(label="4", style=grey_button_style, row=2)
     async def four_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -451,11 +435,7 @@ class CalculatorButtons(View):
     @button(label="5", style=grey_button_style, row=2)
     async def five_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -463,11 +443,7 @@ class CalculatorButtons(View):
     @button(label="6", style=grey_button_style, row=2)
     async def six_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -475,11 +451,7 @@ class CalculatorButtons(View):
     @button(label="7", style=grey_button_style, row=3)
     async def seven_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -487,11 +459,7 @@ class CalculatorButtons(View):
     @button(label="8", style=grey_button_style, row=3)
     async def eight_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -499,11 +467,7 @@ class CalculatorButtons(View):
     @button(label="9", style=grey_button_style, row=3)
     async def nine_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -511,11 +475,7 @@ class CalculatorButtons(View):
     @button(label="0", style=grey_button_style, row=4)
     async def zero_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -523,11 +483,7 @@ class CalculatorButtons(View):
     @button(label="00", style=grey_button_style, row=4)
     async def double_zero_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -535,11 +491,7 @@ class CalculatorButtons(View):
     @button(label=".", style=grey_button_style, row=4)
     async def dot_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -547,11 +499,7 @@ class CalculatorButtons(View):
     @button(label="x", style=blue_button_style, row=1, custom_id="*")
     async def multiplication_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -559,11 +507,7 @@ class CalculatorButtons(View):
     @button(label="÷", style=blue_button_style, row=2, custom_id="/")
     async def division_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -571,11 +515,7 @@ class CalculatorButtons(View):
     @button(label="+", style=blue_button_style, row=3)
     async def addition_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -583,11 +523,7 @@ class CalculatorButtons(View):
     @button(label="-", style=blue_button_style, row=4)
     async def subtraction_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression += button.label
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -595,11 +531,7 @@ class CalculatorButtons(View):
     @button(label="←", style=red_button_style, row=1)
     async def back_space_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression = self.expression[:-1]
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -607,11 +539,7 @@ class CalculatorButtons(View):
     @button(label="Clear", style=red_button_style, row=2)
     async def clear_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         self.expression = ""
         self.embed.description = self.expression
         await interaction.response.edit_message(embed=self.embed)
@@ -619,11 +547,7 @@ class CalculatorButtons(View):
     @button(label="Exit", style=red_button_style, row=3)
     async def exit_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         for child in self.children:
             child.disabled = True
         embed = nextcord.Embed(title="Abandoned Calculator", color=nextcord.Color.red())
@@ -632,11 +556,7 @@ class CalculatorButtons(View):
     @button(label="=", style=green_button_style, row=4)
     async def equal_to_callback(self, button, interaction: nextcord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message(
-                embed=nextcord.Embed(
-                    title="No U", description="This is not your calculator!"
-                )
-            )
+            return
         expression = self.expression
         expression = expression.replace("÷", "/").replace("x", "8")
         try:
@@ -886,7 +806,7 @@ class util(commands.Cog):
         )
         await ctx.send(embed=em)
 
-    @commands.command(description="Creates a suggestion in #suggestion")
+    @commands.command(name="suggest", description="Creates a suggestion in #suggestion")
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def suggest(self, ctx, suggestion):
         await ctx.channel.purge(limit = 1)

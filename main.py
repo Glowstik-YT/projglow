@@ -567,13 +567,13 @@ class HelpDropdown(nextcord.ui.View):
         max_values=1,
         options=[
             nextcord.SelectOption(
-                label="Moderation", description=f"`{PREFIX}help moderation`", emoji="⚒️"
+                label="Moderation", description=f"{PREFIX}help moderation", emoji="⚒️"
             ),
             nextcord.SelectOption(
-                label="Utility", description=f"`{PREFIX}help utility`", emoji="⚙️"
+                label="Utility", description=f"{PREFIX}help utility", emoji="⚙️"
             ),
             nextcord.SelectOption(
-                label="Music", description=f"`{PREFIX}help music`", emoji="🎵"
+                label="Music", description=f"{PREFIX}help music", emoji="🎵"
             ),
         ],
     )
@@ -787,7 +787,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         missing = [
             perm.replace("_", " ").replace("guild", "server").title()
-            for perm in error.missing_perms
+            for perm in error.missing_permissions
         ]
         if len(missing) > 2:
             fmt = "{}, and {}".format("**, **".join(missing[:-1]), missing[-1])

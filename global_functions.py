@@ -9,15 +9,15 @@ MAX_WORK_GAIN = 2000
 WEEKLY_AMT = 5000
 BOT_USER_ID = "832712190590844968"
 MEMBERCOUNT_CHANNEL = 864182952937127948  # membercount channel id here, default is the one in glow's server
-UPDATE_CHANNEL = "update channel here"
-ERROR_CHANNELS = ["error channel ids here"]
+UPDATE_CHANNEL = "834579757320241163"
+ERROR_CHANNELS = ["897838814670778371"]
 GUILDS = [
     {"server": 815976334907801601},
     {"server": 803080452968808468},
     {"server": 824640805884919849},
 ]
 
-TOKEN = "token here"
+TOKEN = ""
 # make sure to remove it before you push
 
 
