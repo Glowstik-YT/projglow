@@ -567,13 +567,13 @@ class HelpDropdown(nextcord.ui.View):
         max_values=1,
         options=[
             nextcord.SelectOption(
-                label="Moderation", description=f"`{PREFIX}help moderation`", emoji="⚒️"
+                label="Moderation", description=f"{PREFIX}help moderation", emoji="⚒️"
             ),
             nextcord.SelectOption(
-                label="Utility", description=f"`{PREFIX}help utility`", emoji="⚙️"
+                label="Utility", description=f"{PREFIX}help utility", emoji="⚙️"
             ),
             nextcord.SelectOption(
-                label="Music", description=f"`{PREFIX}help music`", emoji="🎵"
+                label="Music", description=f"{PREFIX}help music", emoji="🎵"
             ),
         ],
     )
