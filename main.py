@@ -376,6 +376,8 @@ from logging import exception
 import nextcord
 import traceback
 import datetime
+from nextcord.colour import Color
+from nextcord.embeds import Embed
 from nextcord.ext import commands, tasks
 from global_functions import (
     PREFIX,
@@ -384,6 +386,8 @@ from global_functions import (
     ERROR_CHANNELS,
     UPDATE_CHANNEL,
     MEMBERCOUNT_CHANNEL,
+    read_database,
+    write_database
 )
 import random, json, os, sys
 from difflib import get_close_matches
@@ -533,8 +537,65 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
+    if member.guild.id != 794739329956053063:
+        return
     channel = client.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
+
+
+
+@client.event
+async def on_raw_reaction_add(payload):
+    if str(payload.emoji) != "⭐":
+        return
+    database = read_database()
+    try:
+        guild_starboard_settings = database[str(payload.guild_id)]['starboard']
+        guild_starboard_settings['on or off']
+        guild_starboard_settings['channel']
+        guild_starboard_settings['minimum stars']
+    except:
+        return
+    try:
+        if not guild_starboard_settings["on or off"]:
+            return
+    except:
+        return
+    channel = client.get_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+    for react in message.reactions:
+        if str(react.emoji) == "⭐":
+            react_count = react.count
+            break
+    if react_count >= 1:
+        try:
+            starboard_channel = client.get_channel(
+                    guild_starboard_settings["channel"])
+            try:
+                sent_msg = await starboard_channel.fetch_message(
+                        guild_starboard_settings[str(message.id)]
+                    )
+                await sent_msg.edit(
+                        content=f":star2: {react_count} {channel.mention}"
+                    )
+            except:
+                embed = nextcord.Embed(
+                        description=f"{message.content}\n**Source**\n[Jump!]({message.jump_url})"
+                    )
+                embed.set_author(
+                        name=message.author.display_name,
+                        icon_url=message.author.display_avatar,
+                    )
+                embed.set_footer(text=str(message.id))
+                sent_msg = await starboard_channel.send(
+                        f":star2: {react_count} {channel.mention}", embed=embed
+                    )
+                guild_starboard_settings[str(message.id)] = sent_msg.id
+                write_database(data=database)
+
+        except:
+            ...
+
 
 
 @client.event
@@ -567,13 +628,13 @@ class HelpDropdown(nextcord.ui.View):
         max_values=1,
         options=[
             nextcord.SelectOption(
-                label="Moderation", description=f"{PREFIX}help moderation", emoji="⚒️"
+                label="Moderation", description=f"`{PREFIX}help moderation`", emoji="⚒️"
             ),
             nextcord.SelectOption(
-                label="Utility", description=f"{PREFIX}help utility", emoji="⚙️"
+                label="Utility", description=f"`{PREFIX}help utility`", emoji="⚙️"
             ),
             nextcord.SelectOption(
-                label="Music", description=f"{PREFIX}help music", emoji="🎵"
+                label="Music", description=f"`{PREFIX}help music`", emoji="🎵"
             ),
         ],
     )
@@ -591,7 +652,7 @@ class HelpDropdown(nextcord.ui.View):
                 title=f"{client.user.name} Moderation Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for command in client.get_cog("Moderation").walk_commands():
+            for index, command in enumerate(client.get_cog("Moderation").get_commands()):
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -649,6 +710,23 @@ async def help(ctx):
         icon_url=f"{ctx.author.display_avatar}",
     )
     await ctx.send(embed=embed, view=view)
+
+
+@help.command(aliases=['sb','starb'])
+async def starboard(ctx):
+    embed=Embed(title="Help with Starboard", description=f"""
+`{PREFIX}starboard setup`
+Setup the starboard!
+
+`{PREFIX}starboard toggle [on/off]`
+Toggle the starboard
+
+`{PREFIX}starboard channel [channel]`
+Get/Change the starboard channel settings
+
+`{PREFIX}starboard minstars [number]`
+Get/Change the starboard minimum star settings""")
+    await ctx.send(embed=embed)
 
 
 @help.command()
@@ -712,8 +790,14 @@ async def music(ctx):
 @client.event
 async def on_error(error, *args, **kwargs):
     try:
+        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        formatted_args = f"```py\n{formatted_args}```"
         for ERROR_CHANNEL in ERROR_CHANNELS:
-            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            try:
+                error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            except:
+                print(f"Can't log errors to the channel with id `{ERROR_CHANNEL}`")
+                continue
             exception = sys.exc_info()
             exc = "\n".join(
                 traceback.format_exception(exception[0], exception[1], exception[2])
@@ -721,7 +805,7 @@ async def on_error(error, *args, **kwargs):
             error_em = nextcord.Embed(
                 title=exception[0].__name__,
                 color=nextcord.Color.red(),
-                description=f"**Error in**: `{error}`\n```py\n{exc}```",
+                description=f"**Error in**: `{error}`\n```py\n{exc}```\n{f'Args: {formatted_args}' if len(args) > 0 else ''}\n{f'Kwargs: {kwargs}' if len(kwargs) > 0 else ''}",
             )
             try:
                 await error_channel.send(embed=error_em)
@@ -733,7 +817,8 @@ async def on_error(error, *args, **kwargs):
         exc = "\n".join(
             traceback.format_exception(exception[0], exception[1], exception[2])
         )
-        print(exc)
+        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        print(exc, "Args: \n"+formatted_args)
 
 
 @client.event
@@ -787,7 +872,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         missing = [
             perm.replace("_", " ").replace("guild", "server").title()
-            for perm in error.missing_permissions
+            for perm in error.missing_perms
         ]
         if len(missing) > 2:
             fmt = "{}, and {}".format("**, **".join(missing[:-1]), missing[-1])
@@ -797,6 +882,9 @@ async def on_command_error(ctx, error):
         em = nextcord.Embed(title="Invalid Permissions", description=_message)
         await ctx.send(embed=em)
         return
+    if isinstance(error, commands.MissingRequiredArgument):
+        embed=Embed(title="Missing Required Arguments!", description=error, color=Color.red())
+        await ctx.send(embed=embed)
     if isinstance(error, commands.BotMissingPermissions):
         missing = [
             perm.replace("_", " ").replace("guild", "server").title()
@@ -827,6 +915,7 @@ async def on_command_error(ctx, error):
             error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
         except:
             print(f"Can't Fetch The Error Channel With ID: `{ERROR_CHANNEL}`")
+            return print(exception)
         error_em = nextcord.Embed(
             title=error.__class__.__name__,
             description=f"""

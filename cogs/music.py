@@ -396,10 +396,7 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         if after.channel is not None:
             return
-        elif (
-            self.client.user in before.channel.members
-            and len(before.channel.members) == 1
-        ):
+        elif self.client.user in before.channel.members and len(before.channel.members) == 1:
             voice_client = before.channel.guild.voice_client
             await voice_client.disconnect(force=True)
 
@@ -435,7 +432,10 @@ class Music(commands.Cog):
             return await ctx.send(embed=em1)
         await ctx.voice_client.disconnect()
         player = music.get_player(guild_id=ctx.guild.id)
-        await player.delete()
+        try:
+            await player.delete()
+        except:
+            ...
         em1 = nextcord.Embed(
             title="Left Voice!", description="Successfully left your voice channel"
         )
