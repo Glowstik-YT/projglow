@@ -407,7 +407,7 @@ for fn in os.listdir("./cogs"):
         client.load_extension(f"cogs.{fn[:-3]}")
 
 
-@tasks.loop(minutes=2.5)
+@tasks.loop(minutes=10)
 async def member_count():
     try:
         member_count_channel = await client.fetch_channel(MEMBERCOUNT_CHANNEL)
