@@ -1,8 +1,15 @@
 #This Code Is Under The MPL-2.0 License
 
 import nextcord
+from nextcord.colour import Color
+from nextcord.components import Button
+from nextcord.embeds import Embed
 from nextcord.ext import commands
-from global_functions import ban_msg, kick_msg, BOT_USER_ID
+from nextcord.ext.commands.cooldowns import BucketType
+from nextcord.ui.view import View
+from nextcord.ext import commands
+import json
+from global_functions import ban_msg, kick_msg, BOT_USER_ID, read_database, write_database, PREFIX
 import random
 import asyncio
 from difflib import get_close_matches
@@ -637,6 +644,264 @@ class Moderation(commands.Cog):
                 description="Lets pretend like this never happened them :I",
             )
             await ctx.author.send(embed=banEmbed)
+    
+    @commands.group(invoke_without_command = True, aliases=['sb', 'starb'], description="A starboard")
+    @commands.has_permissions(manage_guild = True)
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def starboard(self, ctx):
+        try:
+            guild_starboard_settings = read_database()[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            embed.set_footer(text="P.S. Use `>help starboard` for more info!")
+            return await ctx.send(embed=embed)
+        embed = Embed(title=f"{ctx.guild.name}'s Starboard Settings")
+        embed.add_field(name="Status", value="Enabled" if guild_starboard_settings['on or off'] == True else "Disabled")
+        embed.add_field(name="Channel", value=f"<#{guild_starboard_settings['channel']}>")
+        embed.add_field(name="Number Of Stars Before Announcing", value=str(guild_starboard_settings['minimum stars']))
+        embed.set_footer(text="P.S. Use `>help starboard` for more info!")
+        await ctx.send(embed=embed)
+    
+    @starboard.command(description="Set up the starboard!")
+    @commands.has_permissions(manage_guild=True)
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def setup(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings = read_database()[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            ...
+        else:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"The starboard is already setup for this server!\nUse `{PREFIX}starboard` to view the settings!\nDo you want to wipe all the data and start again?")
+            view=View()
+            view.add_item(nextcord.ui.Button(style=nextcord.ButtonStyle.red, label="Yes", custom_id="True", emoji="✔️"))
+            view.add_item(nextcord.ui.Button(style=nextcord.ButtonStyle.green, label="No", custom_id="False", emoji="✖️"))
+            await ctx.send(embed=embed, view=view)
+            def check(i):
+                return i.user.id == ctx.author.id
+            r=True
+            while r:
+                try:
+                    res = await self.client.wait_for('interaction', check=check, timeout=60.0)
+                    if res.data['component_type'] != 2:
+                        ...
+                    elif res.data['custom_id'] == "True":
+                        embed=Embed(title="Success!", color=Color.green(), description="Let's start the setup!")
+                        await ctx.send(embed=embed)
+                        r=False
+                        ...
+                    elif res.data['custom_id'] == "False":
+                        embed=Embed(title="Cancelled!", description="**Nothing Happened**", color=Color.red())
+                        await ctx.send(embed=embed)
+                        r=False
+                        return
+                except asyncio.TimeoutError:
+                    return
+        embed = Embed(title="Let's start the Starboard setup!", description="Where should I post the starboard?")
+        embed.set_footer(text="Send `cancel` to cancel!")
+        await ctx.send(embed=embed)
+        retry=True
+        def check(m):
+            return m.author.id == ctx.author.id
+        while retry:
+            try:
+                response = await self.client.wait_for('message', check=check, timeout=60.0)
+                if response.content == "cancel":
+                    retry=False
+                    await ctx.send(embed=Embed(color=Color.red(), description="Cancelling..."))
+                else:
+                    try:
+                        channel_to_post_in = await commands.TextChannelConverter().convert(ctx, response.content)
+                        try:
+                            database[str(ctx.guild.id)]
+                        except:
+                            database[str(ctx.guild.id)] = {}
+                        database[str(ctx.guild.id)]['starboard'] = {}
+                        database[str(ctx.guild.id)]['starboard']['channel'] = channel_to_post_in.id
+                        database[str(ctx.guild.id)]['starboard']['on or off'] = True
+                        embed=Embed(title="Success!", color=Color.green(), description=f"The starboard will be sent to {channel_to_post_in.mention}")
+                        await ctx.send(embed=embed)
+                        embed=Embed(description="What should be the minimum star amount?")
+                        await ctx.send(embed=embed)
+                        re=True
+                        while re:
+                            try:
+                                response = await self.client.wait_for("message", check=check, timeout=60.0)
+                                if response.content == "cancel":
+                                    re=False
+                                    await ctx.send(embed=Embed(description="Cancelling....", color=Color.red()))
+                                else:
+                                    try:
+                                        int(response.content)
+                                        database[str(ctx.guild.id)]['starboard']['minimum stars'] = response.content
+                                        await ctx.send(embed=Embed(title="Success!",color=Color.green(), description=f"Successfully set the minimum amount of stars to `{response.content}`"))
+                                        re=False
+                                        view = nextcord.ui.View()
+                                        view.add_item(nextcord.ui.Button(style=nextcord.ButtonStyle.green, label="Save", custom_id='True', emoji="✔️"))
+                                        view.add_item(nextcord.ui.Button(label="Cancel", style=nextcord.ButtonStyle.danger, emoji="✖️", custom_id='False'))
+                                        def check(i):
+                                            return i.user.id == ctx.author.id
+                                        embed=Embed(title="Do you want to save the changes?")
+                                        await ctx.send(embed=embed, view=view)
+                                        r=True
+                                        while r:
+                                            try:
+                                                res = await self.client.wait_for('interaction', check=check, timeout=60.0)
+                                                if res.data['component_type'] != 2:
+                                                    ...
+                                                elif res.data['custom_id'] == "True":
+                                                    write_database(data=database)
+                                                    embed=Embed(title="Success!", color=Color.green(), description="The changes were successfully saved!")
+                                                    await ctx.send(embed=embed)
+                                                    r=False
+                                                elif res.data['custom_id'] == "False":
+                                                    embed=Embed(title="Cancelled!", description="The changes were not saved!", color=Color.red())
+                                                    await ctx.send(embed=embed)
+                                                    r=False
+                                            except asyncio.TimeoutError:
+                                                embed=Embed(description="Let's pretend that never happened!")
+                                                return await ctx.send(embed=embed)
+                                    except commands.BadArgument:
+                                        embed=Embed(title="Error!", description=f"Can't convert `{response.content}` to a number, try again.", color=Color.red())
+                                        await ctx.send(embed=embed)
+                            except asyncio.TimeoutError:
+                                embed=Embed(description="Let's pretend that never happened!")
+                                return await ctx.send(embed=embed)
+                                re=False
+                        retry=False
+                    except commands.BadArgument:
+                        embed=Embed(title="Error!", color=Color.red(), description="I can't find that channel ;-;")
+                        await ctx.send(embed=embed)
+            except asyncio.TimeoutError:
+                embed=Embed(description="Let's pretend that never happened!")
+                return await ctx.send(embed=embed)
+                retry=False
+    
+    @starboard.group(invoke_without_command=True, description="Toggle the starboard!")
+    @commands.has_permissions(manage_guild=True)
+    async def toggle(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        embed=Embed(title=f"My Starboard Settings For {ctx.guild.name}", color=Color.green() if guild_starboard_settings['on or off'] else Color.red(), description=f"The starboard is `{'Enabled' if guild_starboard_settings['on or off'] else 'Disabled'}` for this server.")
+        await ctx.send(embed=embed)
+
+    @toggle.command(aliases=['enable','true','enabled','+'], description="Toggle the starboard!")
+    @commands.has_permissions(manage_guild=True)
+    async def on(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        if guild_starboard_settings['on or off']:
+            return await ctx.send(embed=Embed(title="Error!", description="The starboard for this server is already enabled!", color=Color.red()))
+        guild_starboard_settings['on or off'] = True
+        write_database(data=database)
+        await ctx.send(embed=Embed(title="Success!", color=Color.green(), description="The starboard has been `enabled` for this server!"))
+
+    @toggle.command(aliases=['disable','false','disabled','-'], description="Toggle the starboard!")
+    @commands.has_permissions(manage_guild=True)
+    async def off(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        if not guild_starboard_settings['on or off']:
+            return await ctx.send(embed=Embed(title="Error!", description="The starboard for this server is already disabled!", color=Color.red()))
+        guild_starboard_settings['on or off'] = False
+        write_database(data=database)
+        await ctx.send(embed=Embed(title="Success!", color=Color.red(), description="The starboard has been `disabled` for this server!"))
+
+    @starboard.group(aliases=['ch'], invoke_without_command=True, description="Get the current starboard channel setting")
+    @commands.has_permissions(manage_guild=True)
+    async def channel(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        
+        await ctx.send(embed=Embed(title=f"My Starboard Channel Settings For {ctx.guild.name}", color=Color.green(), description=f"I post the starboard in <#{guild_starboard_settings['channel']}>"))
+
+    @channel.command(aliases=['set'], description="Change the current starboard channel setting")
+    @commands.has_permissions(manage_guild=True)
+    async def change(ctx,*, channel=None):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        try:
+            channel_to_post_in = await commands.TextChannelConverter().convert(ctx, channel)
+            guild_starboard_settings['channel'] = channel_to_post_in.id
+            write_database(data=database)
+            await ctx.send(embed=Embed(title="Success!", color=Color.green(), description=f"Successfully set the starboard channel to {channel_to_post_in.mention}(#{channel_to_post_in.name})"))
+        except:
+            await ctx.send(embed=Embed(title="Error!", color=Color.red(), description="I wasn't able to find that channel ;-;"))
+
+    @starboard.group(invoke_without_command=True, aliases = ['minstars','min-stars','mins','ms'], description="Get the current starboard minimum star setting")
+    async def minimum_stars(self, ctx):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        await ctx.send(embed=Embed(title=f"My Starboard Minimum Stars Settings For {ctx.guild.name}", color=Color.green()))
+    
+    @minimum_stars.command(aliases=['set'], description="Change the current starboard minimum star setting")
+    @commands.has_permissions(manage_guild=True)
+    async def change(ctx, *, number):
+        database = read_database()
+        try:
+            guild_starboard_settings = database[str(ctx.guild.id)]['starboard']
+            guild_starboard_settings['on or off']
+            guild_starboard_settings['channel']
+            guild_starboard_settings['minimum stars']
+        except:
+            embed = Embed(title="Starboard Error!", color=Color.red(), description=f"You don't have your starboard setup!, use `{PREFIX}starboard setup` to set it up!")
+            return await ctx.send(embed=embed)
+        try:
+            number = int(number)
+            guild_starboard_settings['minimum stars'] = number
+            write_database(data=database)
+            await ctx.send(embed=Embed(title="Success!", color=Color.green(), description=f"Successfully set the starboard minimum stars requirement to {number}"))
+        except:
+            await ctx.send(embed=Embed(title="Error!", color=Color.red(), description="I wasn't able to convert the number to an integer ;-;"))
 
 
 def setup(client):
