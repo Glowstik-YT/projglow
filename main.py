@@ -567,5 +567,12 @@ Error Treaceback: ```py\n{exception}```""",
     )  # Doing this so even when slash commands are implemented, the error handler still works just fine.
     print(exception)
 
+    
+@client.command()
+async def deleteemoji(ctx, emoji: nextcord.Emoji):
+	guild = ctx.guild
+	if ctx.author.guild_permissions.manage_emojis:
+		await ctx.send(f'Successfully deleted: {emoji}')
+		await emoji.delete()
 
 client.run(TOKEN)
