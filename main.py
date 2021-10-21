@@ -569,7 +569,7 @@ Error Treaceback: ```py\n{exception}```""",
 
     
 @client.command()
-async def emojify(ctx,*,text):
+async def emojiy(ctx,*,text):
   emojis = []
   for s in text.lower():
     if s.isdecimal():
