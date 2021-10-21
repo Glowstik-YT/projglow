@@ -2,4 +2,4 @@ nextcord
 DiscordUtils[voice]
 psutil
 requests
-pymongo
+redis
