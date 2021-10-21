@@ -1,5 +1,6 @@
 #This Code Is Under The MPL-2.0 License
 import json
+import redis
 
 # CONTANTS
 MAX_BEG_GAIN = 300
