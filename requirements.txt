@@ -1,5 +1,6 @@
-nextcord
+nextcord==2.0.0a3
+DiscordUtils==1.3.4
 DiscordUtils[voice]
-psutil
-requests
-pymongo
+psutil==5.8.0
+requests==2.26.0
+redis==3.5.3
