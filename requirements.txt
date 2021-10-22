@@ -1,4 +1,4 @@
-nextcord
+git+https://github.com/alentoghostflame/nextcord
 DiscordUtils[voice]
 psutil
 requests
