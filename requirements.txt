@@ -1,4 +1,4 @@
-git+https://github.com/alentoghostflame/nextcord
+git+https://github.com/alentoghostflame/nextcord/tree/alento_slash_commands
 DiscordUtils[voice]
 psutil
 requests
