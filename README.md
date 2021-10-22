@@ -37,7 +37,7 @@ once this is done you have on last step to do.
 
 Lastly, run 
 ```
-git push
+git push <Your repository url>
 ```
 and then go to the github fork you created and click on the contribute button to create a pull request where I will be able to accept or deny the changes!
 # CLA
