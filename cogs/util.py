@@ -806,14 +806,7 @@ class util(commands.Cog):
         )
         await ctx.send(embed=em)
 
-    @commands.command(name="suggest", description="Creates a suggestion in #suggestion")
-    @commands.cooldown(1, 30, commands.BucketType.user)
-    async def suggest(self, ctx, suggestion):
-        await ctx.channel.purge(limit = 1)
-        channel = nextcord.utils.get(ctx.guild.text_channels, name = 'suggestion')
-        suggest = await channel.send(f"{ctx.message.author} suggests: **{suggestion}**")
-        await suggest.add_reaction('✅')
-        await suggest.add_reaction('❌')
+
 
     @tasks.loop(seconds=2.0)
     async def clientuptime(self):
