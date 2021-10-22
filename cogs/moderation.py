@@ -1,5 +1,5 @@
 #This Code Is Under The MPL-2.0 License
-
+import redis
 import nextcord
 from nextcord.colour import Color
 from nextcord.components import Button
