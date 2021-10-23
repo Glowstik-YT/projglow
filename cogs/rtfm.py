@@ -46,8 +46,8 @@ class SphinxObjectFileReader:
 
 class Rtfm(commands.Cog):
     # full credit to https://github.com/Rapptz/RoboDanny
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
     def parse_object_inv(self, stream: SphinxObjectFileReader, url: str) -> Dict:
         result = {}
@@ -94,7 +94,7 @@ class Rtfm(commands.Cog):
         cache = {}
         for key, page in page_types.items():
             sub = cache[key] = {}
-            async with self.client.session.get(page + "/objects.inv") as resp:
+            async with self.bot.session.get(page + "/objects.inv") as resp:
                 if resp.status != 200:
                     raise RuntimeError(
                         "Cannot build rtfm lookup table, try again later."
@@ -170,5 +170,5 @@ class Rtfm(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(client):
-    client.add_cog(Rtfm(client))
+def setup(bot):
+    bot.add_cog(Rtfm(bot))

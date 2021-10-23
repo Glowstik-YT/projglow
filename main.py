@@ -25,27 +25,27 @@ from urllib.request import urlopen
 import json
 
 intents = nextcord.Intents().all()
-client = commands.Bot(
-    command_prefix=str(PREFIX), intents=intents, case_insensitive=True
+bot = commands.Bot(
+    command_prefix=str(PREFIX), intents=intents, case_insensitive=True, register_commands_on_startup=True
 )
-client.remove_command("help")
+bot.remove_command("help")
 
 for fn in os.listdir("./cogs"):
     if fn.endswith(".py") and fn != "global_functions.py":
-        client.load_extension(f"cogs.{fn[:-3]}")
+        bot.load_extension(f"cogs.{fn[:-3]}")
 
 
 @tasks.loop(minutes=10)
 async def member_count():
     try:
-        member_count_channel = await client.fetch_channel(MEMBERCOUNT_CHANNEL)
+        member_count_channel = await bot.fetch_channel(MEMBERCOUNT_CHANNEL)
     except:
         return print(f"Error!\nThe member count channel id is invalid!")
     if not isinstance(member_count_channel, nextcord.VoiceChannel):
         return print(
             f"Error!\nThe member count channel id that you gave is not a voice channel!"
         )
-    glowstiks_git_repo = client.get_guild(794739329956053063)
+    glowstiks_git_repo = bot.get_guild(794739329956053063)
 
     for x in (member_count_channel_name := member_count_channel.name.split(" ")):
         if x.isdigit():
@@ -62,10 +62,10 @@ async def member_count():
 
 
 async def startup():
-    client.session = aiohttp.ClientSession()
+    bot.session = aiohttp.BotSession()
 
 
-client.loop.create_task(startup())
+bot.loop.create_task(startup())
 
 
 def apiReq(id, responseMSG):
@@ -79,63 +79,63 @@ def apiReq(id, responseMSG):
     return data
 
 
-@client.command()
+@bot.command()
 async def chat(ctx, *, responseMSG):
     data = apiReq(ctx.author.id, responseMSG)
     await ctx.send(data)
 
 
-@client.slash_command()
+@bot.slash_command(guild_ids=["895629958133723167"])
 async def load(interaction, extension):
     if interaction.user.id == 744715959817994371:
-        client.load_extension(f"cogs.{extension}")
+        bot.load_extension(f"cogs.{extension}")
         await interaction.response.send_message("Cog loaded")
     else:
         await interaction.response.send_message("Only bot devs can run this command")
 
 
-@client.command()
+@bot.command()
 async def reload(interaction, extension):
     if interaction.user.id == 744715959817994371:
-        client.unload_extension(f"cogs.{extension}")
+        bot.unload_extension(f"cogs.{extension}")
         await asyncio.sleep(1)
-        client.load_extension(f"cogs.{extension}")
+        bot.load_extension(f"cogs.{extension}")
         await interaction.response.send_message("Cog reloaded")
     else:
         await interaction.response.send_message("Only bot devs can run this command")
 
 
-@client.command()
+@bot.command()
 async def unload(interaction, extension):
     if interaction.user.id == 744715959817994371:
-        client.unload_extension(f"cogs.{extension}")
+        bot.unload_extension(f"cogs.{extension}")
         await interaction.response.send_message("Cog unloaded")
     else:
         await interaction.response.send_message("Only bot devs can run this command")
 
 
-@client.command()
+@bot.command()
 async def check(interaction, cog_name):
     if interaction.user.id == 744715959817994371:
         try:
-            client.load_extension(f"cogs.{cog_name}")
+            bot.load_extension(f"cogs.{cog_name}")
         except commands.ExtensionAlreadyLoaded:
             await interaction.response.send_message("Cog is loaded")
         except commands.ExtensionNotFound:
             await interaction.response.send_message("Cog not found")
         else:
             await interaction.response.send_message("Cog is unloaded")
-            client.unload_extension(f"cogs.{cog_name}")
+            bot.unload_extension(f"cogs.{cog_name}")
     else:
         await interaction.response.send_message("Only bot devs can run this command")
 
 
-@client.event
+@bot.event
 async def on_ready():
     member_count.start()
     print("Ready")
     try:
-        update_channel = await client.fetch_channel(int(UPDATE_CHANNEL))
+        update_channel = await bot.fetch_channel(int(UPDATE_CHANNEL))
         embed = nextcord.Embed(
             title="I am online!",
             description=f"I got online at {nextcord.utils.format_dt(nextcord.utils.utcnow(), 'F')}",
@@ -149,7 +149,7 @@ async def on_ready():
     error_in_loading_channel = []
     for ERROR_CHANNEL in ERROR_CHANNELS:
         try:
-            channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            channel = await bot.fetch_channel(int(ERROR_CHANNEL))
             error_channels.append(
                 f"https://discord.com/channels/{channel.guild.id}/{channel.id}"
             )
@@ -163,16 +163,16 @@ async def on_ready():
     ) if len(error_in_loading_channel) > 0 else ...
 
 
-@client.event
+@bot.event
 async def on_member_join(member):
     if member.guild.id != 794739329956053063:
         return
-    channel = client.get_channel(794745011128369182)
+    channel = bot.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
 
 
 
-@client.event
+@bot.event
 async def on_raw_reaction_add(payload):
     if str(payload.emoji) != "⭐":
         return
@@ -189,7 +189,7 @@ async def on_raw_reaction_add(payload):
             return
     except:
         return
-    channel = client.get_channel(payload.channel_id)
+    channel = bot.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     for react in message.reactions:
         if str(react.emoji) == "⭐":
@@ -197,7 +197,7 @@ async def on_raw_reaction_add(payload):
             break
     if react_count >= 1:
         try:
-            starboard_channel = client.get_channel(
+            starboard_channel = bot.get_channel(
                     guild_starboard_settings["channel"])
             try:
                 sent_msg = await starboard_channel.fetch_message(
@@ -226,14 +226,14 @@ async def on_raw_reaction_add(payload):
 
 
 
-@client.event
+@bot.event
 async def on_message(message):
-    mention = f"<@!{client.user.id}>"
+    mention = f"<@!{bot.user.id}>"
     if message.content == mention:
         await message.channel.send(
             "Eyoo Nerds my prefix is `>` for help use the command `>help`"
         )
-    await client.process_commands(message)
+    await bot.process_commands(message)
 
 
 class UrlButton(nextcord.ui.Button):
@@ -277,10 +277,10 @@ class HelpDropdown(nextcord.ui.View):
         select.placeholder = f"{select.values[0]} Help Page"
         if select.values[0] == "Moderation":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Moderation Commands:",
+                title=f"{bot.user.name} Moderation Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for index, command in enumerate(client.get_cog("Moderation").get_commands()):
+            for index, command in enumerate(bot.get_cog("Moderation").get_commands()):
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -291,10 +291,10 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
         elif select.values[0] == "Utility":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Utility Commands:",
+                title=f"{bot.user.name} Utility Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for command in client.get_cog("util").walk_commands():
+            for command in bot.get_cog("util").walk_commands():
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -305,10 +305,10 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
         elif select.values[0] == "Music":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Music Commands:",
+                title=f"{bot.user.name} Music Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for command in client.get_cog("Music").walk_commands():
+            for command in bot.get_cog("Music").walk_commands():
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -319,20 +319,20 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
 
 
-@client.group(invoke_without_command=True)
+@bot.group(invoke_without_command=True)
 async def help(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Help",
+        title=f"{bot.user.name} Help",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for more information.",
     )
-    embed.set_thumbnail(url=f"{client.user.display_avatar}")
+    embed.set_thumbnail(url=f"{bot.user.display_avatar}")
     embed.add_field(
         name="Moderation:", value=f"`{PREFIX}help moderation`", inline=False
     )
     embed.add_field(name="Utility:", value=f"`{PREFIX}help utility`", inline=False)
     embed.add_field(name="Music:", value=f"`{PREFIX}help music`", inline=False)
-    dank_lord = await client.fetch_user(758290177919156244)
+    dank_lord = await bot.fetch_user(758290177919156244)
     embed.set_footer(
         text=f"Requested by {ctx.author} | Created by: palp#9999 | Improved by: {dank_lord}",
         icon_url=f"{ctx.author.display_avatar}",
@@ -361,14 +361,14 @@ Get/Change the starboard minimum star settings""")
 async def moderation(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Moderation Commands:",
+        title=f"{bot.user.name} Moderation Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
     embed = nextcord.Embed(
-        title=f"{client.user.name} Moderation Commands:",
+        title=f"{bot.user.name} Moderation Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("Moderation").walk_commands():
+    for command in bot.get_cog("Moderation").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -383,10 +383,10 @@ async def moderation(ctx):
 async def utility(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Utility Commands:",
+        title=f"{bot.user.name} Utility Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("util").walk_commands():
+    for command in bot.get_cog("util").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -401,10 +401,10 @@ async def utility(ctx):
 async def music(ctx):
     view = HelpDropdown(ctx.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Music Commands:",
+        title=f"{bot.user.name} Music Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("Music").walk_commands():
+    for command in bot.get_cog("Music").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -415,14 +415,14 @@ async def music(ctx):
     await ctx.send(embed=embed, view=view)
 
 
-@client.event
+@bot.event
 async def on_error(error, *args, **kwargs):
     try:
         formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
         formatted_args = f"```py\n{formatted_args}```"
         for ERROR_CHANNEL in ERROR_CHANNELS:
             try:
-                error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+                error_channel = await bot.fetch_channel(int(ERROR_CHANNEL))
             except:
                 print(f"Can't log errors to the channel with id `{ERROR_CHANNEL}`")
                 continue
@@ -449,11 +449,11 @@ async def on_error(error, *args, **kwargs):
         print(exc, "Args: \n"+formatted_args)
 
 
-@client.event
+@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         cmd = ctx.invoked_with
-        cmds = [cmd.name for cmd in client.commands]
+        cmds = [cmd.name for cmd in bot.commands]
         matches = get_close_matches(cmd, cmds)
         if len(matches) > 0:
             embed = nextcord.Embed(
@@ -540,7 +540,7 @@ async def on_command_error(ctx, error):
     )
     for ERROR_CHANNEL in ERROR_CHANNELS:
         try:
-            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            error_channel = await bot.fetch_channel(int(ERROR_CHANNEL))
         except:
             print(f"Can't Fetch The Error Channel With ID: `{ERROR_CHANNEL}`")
             return print(exception)
@@ -568,4 +568,4 @@ Error Treaceback: ```py\n{exception}```""",
     print(exception)
 
 
-client.run(TOKEN)
+bot.run(TOKEN)

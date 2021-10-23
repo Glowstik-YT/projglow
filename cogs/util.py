@@ -581,9 +581,9 @@ ud = 0
 
 
 class util(commands.Cog):
-    def __init__(self, client):
-        self.client = client
-        self.clientuptime.start()
+    def __init__(self, bot):
+        self.bot = bot
+        self.botuptime.start()
 
     @commands.command(description="A handy Calculator!", aliases=["calc"])
     async def calculator(self, ctx):
@@ -624,7 +624,7 @@ class util(commands.Cog):
             name="Guild permissions", value=f"{perm_paginator.pages[0]}", inline=False
         )
         embed.set_footer(
-            text=self.client.user.name, icon_url=self.client.user.display_avatar
+            text=self.bot.user.name, icon_url=self.bot.user.display_avatar
         )
         return await ctx.send(embed=embed)
 
@@ -656,7 +656,7 @@ class util(commands.Cog):
         embed2.set_thumbnail(url=ctx.guild.icon.url)
         embed2.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed2.set_footer(
-            text=self.client.user.name, icon_url=self.client.user.display_avatar
+            text=self.bot.user.name, icon_url=self.bot.user.display_avatar
         )
         await ctx.send(embed=embed2)
 
@@ -689,7 +689,7 @@ class util(commands.Cog):
         embed.set_thumbnail(url=ctx.guild.icon.url)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_footer(
-            text=self.client.user.name, icon_url=self.client.user.display_avatar
+            text=self.bot.user.name, icon_url=self.bot.user.display_avatar
         )
         await ctx.send(embed=embed)
 
@@ -697,7 +697,7 @@ class util(commands.Cog):
     async def emojiadd(self, ctx, url: str, *, name):
         guild = ctx.guild
         if ctx.author.guild_permissions.manage_emojis:
-            async with aiohttp.ClientSession() as ses:
+            async with aiohttp.BotSession() as ses:
                 async with ses.get(url) as r:
 
                     try:
@@ -743,7 +743,7 @@ class util(commands.Cog):
     @commands.command(name="toggle", description="Enable or disable a command!")
     @commands.is_owner()
     async def toggle(self, ctx, *, command):
-        command = self.client.get_command(command)
+        command = self.bot.get_command(command)
 
         if command is None:
             embed = nextcord.Embed(
@@ -799,7 +799,7 @@ class util(commands.Cog):
     async def ping(self, ctx):
         em = nextcord.Embed(title="Pong!🏓", colour=nextcord.Colour.random())
         em.add_field(
-            name="My API Latency is:", value=f"{round(self.client.latency*1000)} ms!"
+            name="My API Latency is:", value=f"{round(self.bot.latency*1000)} ms!"
         )
         em.set_footer(
             text=f"Ping requested by {ctx.author}", icon_url=ctx.author.display_avatar
@@ -809,7 +809,7 @@ class util(commands.Cog):
 
 
     @tasks.loop(seconds=2.0)
-    async def clientuptime(self):
+    async def botuptime(self):
         global uh, us, um, ud
         us += 2
         if us == 60:
@@ -822,10 +822,10 @@ class util(commands.Cog):
                     uh = 0
                     ud += 1
 
-    @clientuptime.before_loop
-    async def before_clientuptime(self):
+    @botuptime.before_loop
+    async def before_botuptime(self):
         print("waiting...")
-        await self.client.wait_until_ready()
+        await self.bot.wait_until_ready()
 
     @commands.command(
         aliases=["statistics", "stat", "statistic"],
@@ -849,5 +849,5 @@ class util(commands.Cog):
         await ctx.send(embed=em)
 
 
-def setup(client):
-    client.add_cog(util(client))
+def setup(bot):
+    bot.add_cog(util(bot))

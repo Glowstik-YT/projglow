@@ -4,8 +4,8 @@ from global_functions import BOT_USER_ID
 
 
 class Suggestion(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -35,5 +35,5 @@ class Suggestion(commands.Cog):
         suggestionMsg = await channel.fetch_message(id)
         embed = nextcord.Embed(title=f'Suggestion Approved!', description=f'The suggestion id of `{suggestionMsg.id}` has been approved by {ctx.author.mention}')
         await channel.send(embed=embed)
-def setup(client):
-    client.add_cog(Suggestion(client))
+def setup(bot):
+    bot.add_cog(Suggestion(bot))

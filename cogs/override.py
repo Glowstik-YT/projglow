@@ -26,8 +26,8 @@ class BanConfirm(nextcord.ui.View):
 
 
 class Override(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
         @commands.command()
         @commands.has_permissions(kick_members=True)
@@ -63,5 +63,5 @@ class Override(commands.Cog):
             ctx.author.send(embed=em, view=view)
 
 
-def setup(client):
-    client.add_cog(Override(client))
+def setup(bot):
+    bot.add_cog(Override(bot))

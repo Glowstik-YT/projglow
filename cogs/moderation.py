@@ -58,8 +58,8 @@ class LockConfirm(nextcord.ui.View):
         self.stop()
 
 class Moderation(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -105,7 +105,7 @@ class Moderation(commands.Cog):
     @commands.command(description="Unbans a member from your server by ID")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, id: int):
-        user = await self.client.fetch_user(id)
+        user = await self.bot.fetch_user(id)
         await ctx.guild.unban(user)
         em = nextcord.Embed(title="Unban Success", description="Unbanned user :D")
         await ctx.send(embed=em)
@@ -689,7 +689,7 @@ class Moderation(commands.Cog):
             r=True
             while r:
                 try:
-                    res = await self.client.wait_for('interaction', check=check, timeout=60.0)
+                    res = await self.bot.wait_for('interaction', check=check, timeout=60.0)
                     if res.data['component_type'] != 2:
                         ...
                     elif res.data['custom_id'] == "True":
@@ -712,7 +712,7 @@ class Moderation(commands.Cog):
             return m.author.id == ctx.author.id
         while retry:
             try:
-                response = await self.client.wait_for('message', check=check, timeout=60.0)
+                response = await self.bot.wait_for('message', check=check, timeout=60.0)
                 if response.content == "cancel":
                     retry=False
                     await ctx.send(embed=Embed(color=Color.red(), description="Cancelling..."))
@@ -733,7 +733,7 @@ class Moderation(commands.Cog):
                         re=True
                         while re:
                             try:
-                                response = await self.client.wait_for("message", check=check, timeout=60.0)
+                                response = await self.bot.wait_for("message", check=check, timeout=60.0)
                                 if response.content == "cancel":
                                     re=False
                                     await ctx.send(embed=Embed(description="Cancelling....", color=Color.red()))
@@ -753,7 +753,7 @@ class Moderation(commands.Cog):
                                         r=True
                                         while r:
                                             try:
-                                                res = await self.client.wait_for('interaction', check=check, timeout=60.0)
+                                                res = await self.bot.wait_for('interaction', check=check, timeout=60.0)
                                                 if res.data['component_type'] != 2:
                                                     ...
                                                 elif res.data['custom_id'] == "True":
@@ -904,5 +904,5 @@ class Moderation(commands.Cog):
             await ctx.send(embed=Embed(title="Error!", color=Color.red(), description="I wasn't able to convert the number to an integer ;-;"))
 
 
-def setup(client):
-    client.add_cog(Moderation(client))
+def setup(bot):
+    bot.add_cog(Moderation(bot))

@@ -381,8 +381,8 @@ import os
 
 
 class Eval(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
     def resolve_variable(self, variable):
         if hasattr(variable, "__iter__"):
@@ -428,7 +428,7 @@ class Eval(commands.Cog):
             "this": self,
             "ctx": ctx,
             "member": ctx.author,
-            "client": self.client,
+            "bot": self.bot,
         }
 
         try:
@@ -461,5 +461,5 @@ class Eval(commands.Cog):
         del args, code, silent
 
 
-def setup(client):
-    client.add_cog(Eval(client))
+def setup(bot):
+    bot.add_cog(Eval(bot))
