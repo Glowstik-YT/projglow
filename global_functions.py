@@ -73,6 +73,15 @@ ban_msg = [
     "was killed by [Intentional Game Design]"
     "tried to swim in lava"
     "experienced kinetic energy"
+    "drowned",
+    "hit the ground too hard",
+    "was squashed by a falling anvil",
+    "was squished too much",
+    "fell out of the world",
+    "went up in flames",
+    "went off with a bang",
+    "was struck by lightning",
+    "discovered the floor was lava",
 ]
 
 
