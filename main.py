@@ -85,49 +85,49 @@ async def chat(ctx, *, responseMSG):
     await ctx.send(data)
 
 
-@client.command()
-async def load(ctx, extension):
-    if ctx.author.id == 744715959817994371:
+@client.slash_command()
+async def load(interaction, extension):
+    if interaction.user.id == 744715959817994371:
         client.load_extension(f"cogs.{extension}")
-        await ctx.send("Cog loaded")
+        await interaction.response.send_message("Cog loaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await interaction.response.send_message("Only bot devs can run this command")
 
 
 @client.command()
-async def reload(ctx, extension):
-    if ctx.author.id == 744715959817994371:
+async def reload(interaction, extension):
+    if interaction.user.id == 744715959817994371:
         client.unload_extension(f"cogs.{extension}")
         await asyncio.sleep(1)
         client.load_extension(f"cogs.{extension}")
-        await ctx.send("Cog reloaded")
+        await interaction.response.send_message("Cog reloaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await interaction.response.send_message("Only bot devs can run this command")
 
 
 @client.command()
-async def unload(ctx, extension):
-    if ctx.author.id == 744715959817994371:
+async def unload(interaction, extension):
+    if interaction.user.id == 744715959817994371:
         client.unload_extension(f"cogs.{extension}")
-        await ctx.send("Cog unloaded")
+        await interaction.response.send_message("Cog unloaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await interaction.response.send_message("Only bot devs can run this command")
 
 
 @client.command()
-async def check(ctx, cog_name):
-    if ctx.author.id == 744715959817994371:
+async def check(interaction, cog_name):
+    if interaction.user.id == 744715959817994371:
         try:
             client.load_extension(f"cogs.{cog_name}")
         except commands.ExtensionAlreadyLoaded:
-            await ctx.send("Cog is loaded")
+            await interaction.response.send_message("Cog is loaded")
         except commands.ExtensionNotFound:
-            await ctx.send("Cog not found")
+            await interaction.response.send_message("Cog not found")
         else:
-            await ctx.send("Cog is unloaded")
+            await interaction.response.send_message("Cog is unloaded")
             client.unload_extension(f"cogs.{cog_name}")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await interaction.response.send_message("Only bot devs can run this command")
 
 
 @client.event
