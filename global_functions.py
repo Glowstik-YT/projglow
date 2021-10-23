@@ -19,7 +19,7 @@ GUILDS = [
 
 EMOJIS_TO_USE_FOR_CALCULATOR = {"1":"1️⃣", "2":"2️⃣", "3":"3️⃣", "4":"4️⃣", "5":"5️⃣", "6":"6️⃣", "7":"7️⃣", "8":"8️⃣", "9":"9️⃣", "0":"0️⃣", "+":"➕", "-":"➖","x":"✖️","÷":"➗",".":"<:dot:898959986024153088>"} #Make sure to change the point emoji, as this one is from glows server
 
-TOKEN = "ODk3MzM3ODM1NDk2MDE3OTgw.YWUM-w.kVOdlQ4tbaN5ZnzE1fmhcTIa6jo"
+TOKEN = ""
 # make sure to remove it before you push
 
 
