@@ -50,7 +50,7 @@ class FilterCog(commands.Cog, name = "Filter"):
                     webhook = webhooks[0]
                 except:
                     try:
-                        webhook = await message.channel.create_webhook(name='BobDotBot filter')
+                        webhook = await message.channel.create_webhook(name='projGlow filter')
                     except:
                         pass
                 if webhook:
