@@ -1,4 +1,4 @@
-#This Code Is Under The MPL-2.0 License
+# This Code Is Under The MPL-2.0 License
 
 import nextcord
 from nextcord.ext import commands
@@ -24,7 +24,10 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         if after.channel is not None:
             return
-        elif self.client.user in before.channel.members and len(before.channel.members) == 1:
+        elif (
+            self.client.user in before.channel.members
+            and len(before.channel.members) == 1
+        ):
             voice_client = before.channel.guild.voice_client
             await voice_client.disconnect(force=True)
 

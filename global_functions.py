@@ -1,4 +1,4 @@
-#This Code Is Under The MPL-2.0 License
+# This Code Is Under The MPL-2.0 License
 import json
 
 # CONTANTS
@@ -17,7 +17,23 @@ GUILDS = [
     {"server": 824640805884919849},
 ]
 
-EMOJIS_TO_USE_FOR_CALCULATOR = {"1":"1️⃣", "2":"2️⃣", "3":"3️⃣", "4":"4️⃣", "5":"5️⃣", "6":"6️⃣", "7":"7️⃣", "8":"8️⃣", "9":"9️⃣", "0":"0️⃣", "+":"➕", "-":"➖","x":"✖️","÷":"➗",".":"<:dot:898959986024153088>"} #Make sure to change the point emoji, as this one is from glows server
+EMOJIS_TO_USE_FOR_CALCULATOR = {
+    "1": "1️⃣",
+    "2": "2️⃣",
+    "3": "3️⃣",
+    "4": "4️⃣",
+    "5": "5️⃣",
+    "6": "6️⃣",
+    "7": "7️⃣",
+    "8": "8️⃣",
+    "9": "9️⃣",
+    "0": "0️⃣",
+    "+": "➕",
+    "-": "➖",
+    "x": "✖️",
+    "÷": "➗",
+    ".": "<:dot:898959986024153088>",
+}  # Make sure to change the point emoji, as this one is from glows server
 
 TOKEN = ""
 # make sure to remove it before you push
@@ -201,8 +217,16 @@ responses = [
 
 shop_display = [
     {"name": "Laptop", "price": "``$5,000``", "description": "Used for posting memes"},
-    {"name": "Phone", "price": "``$1,000``", "description": "Bored? Well look at some memes!"},
-    {"name": "Nothing", "price": "``$500,000``", "description": "It's literally nothing, why would you waste your money"},
+    {
+        "name": "Phone",
+        "price": "``$1,000``",
+        "description": "Bored? Well look at some memes!",
+    },
+    {
+        "name": "Nothing",
+        "price": "``$500,000``",
+        "description": "It's literally nothing, why would you waste your money",
+    },
     {"name": "Glow", "price": "``$100,000``", "description": "FLEX"},
 ]
 
@@ -211,7 +235,7 @@ shop_buy = [
     {"name": "laptop", "nickname": "lap", "price": 5_000, "sell": 2_500},
     {"name": "phone", "nickname": "cell", "price": 1_000, "sell": 500},
     {"name": "glow", "nickname": "glow", "price": 100_000, "sell": 10_000},
-    {"name": "nothing", "nickname": "air", "price": 500_000, "sell": 250_000}
+    {"name": "nothing", "nickname": "air", "price": 500_000, "sell": 250_000},
 ]
 
 
@@ -225,15 +249,17 @@ def write_data(fn, data):
     with open("json/" + str(fn), "w") as f:
         json.dump(data, f, indent=4)
 
+
 def read_database():
     try:
         with open("database.json") as f:
-            database=json.load(f)
+            database = json.load(f)
     except:
         write_database(data={})
-        database={}
+        database = {}
     return database
 
+
 def write_database(*, data):
-    with open("database.json","w+") as f:
+    with open("database.json", "w+") as f:
         json.dump(data, f, indent=4)

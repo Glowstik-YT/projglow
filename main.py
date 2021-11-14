@@ -1,4 +1,4 @@
-#This Code Is Under The MPL-2.0 License
+# This Code Is Under The MPL-2.0 License
 
 from logging import exception
 import nextcord
@@ -15,7 +15,7 @@ from global_functions import (
     UPDATE_CHANNEL,
     MEMBERCOUNT_CHANNEL,
     read_database,
-    write_database
+    write_database,
 )
 import random, json, os, sys
 from difflib import get_close_matches
@@ -171,17 +171,16 @@ async def on_member_join(member):
     await channel.send(f"{member.name} has joined")
 
 
-
 @client.event
 async def on_raw_reaction_add(payload):
     if str(payload.emoji) != "⭐":
         return
     database = read_database()
     try:
-        guild_starboard_settings = database[str(payload.guild_id)]['starboard']
-        guild_starboard_settings['on or off']
-        guild_starboard_settings['channel']
-        guild_starboard_settings['minimum stars']
+        guild_starboard_settings = database[str(payload.guild_id)]["starboard"]
+        guild_starboard_settings["on or off"]
+        guild_starboard_settings["channel"]
+        guild_starboard_settings["minimum stars"]
     except:
         return
     try:
@@ -197,33 +196,29 @@ async def on_raw_reaction_add(payload):
             break
     if react_count >= 1:
         try:
-            starboard_channel = client.get_channel(
-                    guild_starboard_settings["channel"])
+            starboard_channel = client.get_channel(guild_starboard_settings["channel"])
             try:
                 sent_msg = await starboard_channel.fetch_message(
-                        guild_starboard_settings[str(message.id)]
-                    )
-                await sent_msg.edit(
-                        content=f":star2: {react_count} {channel.mention}"
-                    )
+                    guild_starboard_settings[str(message.id)]
+                )
+                await sent_msg.edit(content=f":star2: {react_count} {channel.mention}")
             except:
                 embed = nextcord.Embed(
-                        description=f"{message.content}\n**Source**\n[Jump!]({message.jump_url})"
-                    )
+                    description=f"{message.content}\n**Source**\n[Jump!]({message.jump_url})"
+                )
                 embed.set_author(
-                        name=message.author.display_name,
-                        icon_url=message.author.display_avatar,
-                    )
+                    name=message.author.display_name,
+                    icon_url=message.author.display_avatar,
+                )
                 embed.set_footer(text=str(message.id))
                 sent_msg = await starboard_channel.send(
-                        f":star2: {react_count} {channel.mention}", embed=embed
-                    )
+                    f":star2: {react_count} {channel.mention}", embed=embed
+                )
                 guild_starboard_settings[str(message.id)] = sent_msg.id
                 write_database(data=database)
 
         except:
             ...
-
 
 
 @client.event
@@ -280,7 +275,9 @@ class HelpDropdown(nextcord.ui.View):
                 title=f"{client.user.name} Moderation Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for index, command in enumerate(client.get_cog("Moderation").get_commands()):
+            for index, command in enumerate(
+                client.get_cog("Moderation").get_commands()
+            ):
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -340,9 +337,11 @@ async def help(ctx):
     await ctx.send(embed=embed, view=view)
 
 
-@help.command(aliases=['sb','starb'])
+@help.command(aliases=["sb", "starb"])
 async def starboard(ctx):
-    embed=Embed(title="Help with Starboard", description=f"""
+    embed = Embed(
+        title="Help with Starboard",
+        description=f"""
 `{PREFIX}starboard setup`
 Setup the starboard!
 
@@ -353,7 +352,8 @@ Toggle the starboard
 Get/Change the starboard channel settings
 
 `{PREFIX}starboard minstars [number]`
-Get/Change the starboard minimum star settings""")
+Get/Change the starboard minimum star settings""",
+    )
     await ctx.send(embed=embed)
 
 
@@ -418,7 +418,9 @@ async def music(ctx):
 @client.event
 async def on_error(error, *args, **kwargs):
     try:
-        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        formatted_args = "\n".join(
+            [f"{args.index(arg)+1}) {str(arg)} ({type(arg)})" for arg in args]
+        )
         formatted_args = f"```py\n{formatted_args}```"
         for ERROR_CHANNEL in ERROR_CHANNELS:
             try:
@@ -445,8 +447,10 @@ async def on_error(error, *args, **kwargs):
         exc = "\n".join(
             traceback.format_exception(exception[0], exception[1], exception[2])
         )
-        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
-        print(exc, "Args: \n"+formatted_args)
+        formatted_args = "\n".join(
+            [f"{args.index(arg)+1}) {str(arg)} ({type(arg)})" for arg in args]
+        )
+        print(exc, "Args: \n" + formatted_args)
 
 
 @client.event
@@ -511,7 +515,9 @@ async def on_command_error(ctx, error):
         await ctx.send(embed=em)
         return
     if isinstance(error, commands.MissingRequiredArgument):
-        embed=Embed(title="Missing Required Arguments!", description=error, color=Color.red())
+        embed = Embed(
+            title="Missing Required Arguments!", description=error, color=Color.red()
+        )
         await ctx.send(embed=embed)
     if isinstance(error, commands.BotMissingPermissions):
         missing = [

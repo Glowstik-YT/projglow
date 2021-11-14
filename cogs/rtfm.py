@@ -1,4 +1,4 @@
-#Script Taken From https://github.com/nextcord/previous
+# Script Taken From https://github.com/nextcord/previous
 import io
 import os
 import re
