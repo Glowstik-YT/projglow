@@ -1,4 +1,4 @@
-#Script Taken From https://github.com/nextcord/previous
+# Script Taken From https://github.com/nextcord/previous
 import io
 import os
 import re
@@ -7,6 +7,7 @@ from typing import Dict
 
 import nextcord as discord
 from nextcord.ext import commands
+from ..internal.cog import Cog
 
 from .extras import fuzzy
 
@@ -44,10 +45,10 @@ class SphinxObjectFileReader:
                 pos = buf.find(b"\n")
 
 
-class Rtfm(commands.Cog):
+class Rtfm(Cog):
     # full credit to https://github.com/Rapptz/RoboDanny
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, Bot):
+        self.Bot = Bot
 
     def parse_object_inv(self, stream: SphinxObjectFileReader, url: str) -> Dict:
         result = {}
@@ -94,7 +95,7 @@ class Rtfm(commands.Cog):
         cache = {}
         for key, page in page_types.items():
             sub = cache[key] = {}
-            async with self.client.session.get(page + "/objects.inv") as resp:
+            async with self.Bot.session.get(page + "/objects.inv") as resp:
                 if resp.status != 200:
                     raise RuntimeError(
                         "Cannot build rtfm lookup table, try again later."
@@ -105,18 +106,18 @@ class Rtfm(commands.Cog):
 
         self._rtfm_cache = cache
 
-    async def do_rtfm(self, ctx, key, obj):
+    async def do_rtfm(self, Context, key, obj):
         page_types = {
             "python": "https://docs.python.org/3",
             "master": "https://nextcord.readthedocs.io/en/latest",
         }
 
         if obj is None:
-            await ctx.send(page_types[key])
+            await Context.send(page_types[key])
             return
 
         if not hasattr(self, "_rtfm_cache"):
-            await ctx.trigger_typing()
+            await Context.trigger_typing()
             await self.build_rtfm_lookup_table(page_types)
 
         obj = re.sub(r"^(?:discord\.(?:ext\.)?)?(?:commands\.)?(.+)", r"\1", obj)
@@ -141,34 +142,34 @@ class Rtfm(commands.Cog):
 
         e = discord.Embed(colour=discord.Colour.blurple())
         if len(matches) == 0:
-            return await ctx.send("Could not find anything. Sorry.")
+            return await Context.send("Could not find anything. Sorry.")
 
         e.description = "\n".join(f"[`{key}`]({url})" for key, url in matches)
-        ref = ctx.message.reference
+        ref = Context.message.reference
         refer = None
         if ref and isinstance(ref.resolved, discord.Message):
             refer = ref.resolved.to_reference()
-        await ctx.send(embed=e, reference=refer)
+        await Context.send(embed=e, reference=refer)
 
     @commands.group(
         name="rtfm", help="python docs", aliases=["rtfd"], invoke_without_command=True
     )
-    async def rtfm_group(self, ctx: commands.Context, *, obj: str = None):
-        await self.do_rtfm(ctx, "master", obj)
+    async def rtfm_group(self, Context: commands.Context, *, obj: str = None):
+        await self.do_rtfm(Context, "master", obj)
 
     @rtfm_group.command(name="python", aliases=["py"])
-    async def rtfm_python_cmd(self, ctx: commands.Context, *, obj: str = None):
-        await self.do_rtfm(ctx, "python", obj)
+    async def rtfm_python_cmd(self, Context: commands.Context, *, obj: str = None):
+        await self.do_rtfm(Context, "python", obj)
 
     @commands.command(
         help="delete cache of rtfm (owner only)", aliases=["purge-rtfm", "delrtfm"]
     )
     @commands.is_owner()
-    async def rtfmcache(self, ctx: commands.Context):
+    async def rtfmcache(self, Context: commands.Context):
         del self._rtfm_cache
         embed = discord.Embed(title="Purged rtfm cache.", color=discord.Color.blurple())
-        await ctx.send(embed=embed)
+        await Context.send(embed=embed)
 
 
-def setup(client):
-    client.add_cog(Rtfm(client))
+def setup(Bot):
+    Bot.add_cog(Rtfm(Bot))

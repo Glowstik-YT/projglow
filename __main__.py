@@ -1,51 +1,44 @@
-#This Code Is Under The MPL-2.0 License
-
-from logging import exception
+# This Code Is Under The MPL-2.0 License
 import nextcord
 import traceback
 import datetime
+import asyncio
+import aiohttp
+import json, os, sys
+from logging import exception
 from nextcord.colour import Color
 from nextcord.embeds import Embed
 from nextcord.ext import commands, tasks
 from global_functions import (
     PREFIX,
-    responses,
     TOKEN,
     ERROR_CHANNELS,
     UPDATE_CHANNEL,
     MEMBERCOUNT_CHANNEL,
     read_database,
-    write_database
+    write_database,
 )
-import random, json, os, sys
 from difflib import get_close_matches
-import asyncio
-import aiohttp
 from urllib.request import urlopen
-import json
+from .internal.bot import Bot
 
-intents = nextcord.Intents().all()
-client = commands.Bot(
-    command_prefix=str(PREFIX), intents=intents, case_insensitive=True
-)
-client.remove_command("help")
 
 for fn in os.listdir("./cogs"):
     if fn.endswith(".py") and fn != "global_functions.py":
-        client.load_extension(f"cogs.{fn[:-3]}")
+        Bot.load_extension(f"cogs.{fn[:-3]}")
 
 
 @tasks.loop(minutes=10)
 async def member_count():
     try:
-        member_count_channel = await client.fetch_channel(MEMBERCOUNT_CHANNEL)
+        member_count_channel = await Bot.fetch_channel(MEMBERCOUNT_CHANNEL)
     except:
         return print(f"Error!\nThe member count channel id is invalid!")
     if not isinstance(member_count_channel, nextcord.VoiceChannel):
         return print(
             f"Error!\nThe member count channel id that you gave is not a voice channel!"
         )
-    glowstiks_git_repo = client.get_guild(794739329956053063)
+    glowstiks_git_repo = Bot.get_guild(794739329956053063)
 
     for x in (member_count_channel_name := member_count_channel.name.split(" ")):
         if x.isdigit():
@@ -62,10 +55,10 @@ async def member_count():
 
 
 async def startup():
-    client.session = aiohttp.ClientSession()
+    Bot.session = aiohttp.BotSession()
 
 
-client.loop.create_task(startup())
+Bot.loop.create_task(startup())
 
 
 def apiReq(id, responseMSG):
@@ -79,63 +72,63 @@ def apiReq(id, responseMSG):
     return data
 
 
-@client.command()
-async def chat(ctx, *, responseMSG):
-    data = apiReq(ctx.author.id, responseMSG)
-    await ctx.send(data)
+@Bot.command()
+async def chat(Context, *, responseMSG):
+    data = apiReq(Context.author.id, responseMSG)
+    await Context.send(data)
 
 
-@client.command()
-async def load(ctx, extension):
-    if ctx.author.id == 744715959817994371:
-        client.load_extension(f"cogs.{extension}")
-        await ctx.send("Cog loaded")
+@Bot.command()
+async def load(Context, extension):
+    if Context.author.id == 744715959817994371:
+        Bot.load_extension(f"cogs.{extension}")
+        await Context.send("Cog loaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await Context.send("Only bot devs can run this command")
 
 
-@client.command()
-async def reload(ctx, extension):
-    if ctx.author.id == 744715959817994371:
-        client.unload_extension(f"cogs.{extension}")
+@Bot.command()
+async def reload(Context, extension):
+    if Context.author.id == 744715959817994371:
+        Bot.unload_extension(f"cogs.{extension}")
         await asyncio.sleep(1)
-        client.load_extension(f"cogs.{extension}")
-        await ctx.send("Cog reloaded")
+        Bot.load_extension(f"cogs.{extension}")
+        await Context.send("Cog reloaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await Context.send("Only bot devs can run this command")
 
 
-@client.command()
-async def unload(ctx, extension):
-    if ctx.author.id == 744715959817994371:
-        client.unload_extension(f"cogs.{extension}")
-        await ctx.send("Cog unloaded")
+@Bot.command()
+async def unload(Context, extension):
+    if Context.author.id == 744715959817994371:
+        Bot.unload_extension(f"cogs.{extension}")
+        await Context.send("Cog unloaded")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await Context.send("Only bot devs can run this command")
 
 
-@client.command()
-async def check(ctx, cog_name):
-    if ctx.author.id == 744715959817994371:
+@Bot.command()
+async def check(Context, cog_name):
+    if Context.author.id == 744715959817994371:
         try:
-            client.load_extension(f"cogs.{cog_name}")
+            Bot.load_extension(f"cogs.{cog_name}")
         except commands.ExtensionAlreadyLoaded:
-            await ctx.send("Cog is loaded")
+            await Context.send("Cog is loaded")
         except commands.ExtensionNotFound:
-            await ctx.send("Cog not found")
+            await Context.send("Cog not found")
         else:
-            await ctx.send("Cog is unloaded")
-            client.unload_extension(f"cogs.{cog_name}")
+            await Context.send("Cog is unloaded")
+            Bot.unload_extension(f"cogs.{cog_name}")
     else:
-        await ctx.send("Only bot devs can run this command")
+        await Context.send("Only bot devs can run this command")
 
 
-@client.event
+@Bot.event
 async def on_ready():
     member_count.start()
     print("Ready")
     try:
-        update_channel = await client.fetch_channel(int(UPDATE_CHANNEL))
+        update_channel = await Bot.fetch_channel(int(UPDATE_CHANNEL))
         embed = nextcord.Embed(
             title="I am online!",
             description=f"I got online at {nextcord.utils.format_dt(nextcord.utils.utcnow(), 'F')}",
@@ -149,7 +142,7 @@ async def on_ready():
     error_in_loading_channel = []
     for ERROR_CHANNEL in ERROR_CHANNELS:
         try:
-            channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            channel = await Bot.fetch_channel(int(ERROR_CHANNEL))
             error_channels.append(
                 f"https://discord.com/channels/{channel.guild.id}/{channel.id}"
             )
@@ -163,25 +156,24 @@ async def on_ready():
     ) if len(error_in_loading_channel) > 0 else ...
 
 
-@client.event
+@Bot.event
 async def on_member_join(member):
     if member.guild.id != 794739329956053063:
         return
-    channel = client.get_channel(794745011128369182)
+    channel = Bot.get_channel(794745011128369182)
     await channel.send(f"{member.name} has joined")
 
 
-
-@client.event
+@Bot.event
 async def on_raw_reaction_add(payload):
     if str(payload.emoji) != "⭐":
         return
     database = read_database()
     try:
-        guild_starboard_settings = database[str(payload.guild_id)]['starboard']
-        guild_starboard_settings['on or off']
-        guild_starboard_settings['channel']
-        guild_starboard_settings['minimum stars']
+        guild_starboard_settings = database[str(payload.guild_id)]["starboard"]
+        guild_starboard_settings["on or off"]
+        guild_starboard_settings["channel"]
+        guild_starboard_settings["minimum stars"]
     except:
         return
     try:
@@ -189,7 +181,7 @@ async def on_raw_reaction_add(payload):
             return
     except:
         return
-    channel = client.get_channel(payload.channel_id)
+    channel = Bot.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     for react in message.reactions:
         if str(react.emoji) == "⭐":
@@ -197,27 +189,24 @@ async def on_raw_reaction_add(payload):
             break
     if react_count >= 1:
         try:
-            starboard_channel = client.get_channel(
-                    guild_starboard_settings["channel"])
+            starboard_channel = Bot.get_channel(guild_starboard_settings["channel"])
             try:
                 sent_msg = await starboard_channel.fetch_message(
-                        guild_starboard_settings[str(message.id)]
-                    )
-                await sent_msg.edit(
-                        content=f":star2: {react_count} {channel.mention}"
-                    )
+                    guild_starboard_settings[str(message.id)]
+                )
+                await sent_msg.edit(content=f":star2: {react_count} {channel.mention}")
             except:
                 embed = nextcord.Embed(
-                        description=f"{message.content}\n**Source**\n[Jump!]({message.jump_url})"
-                    )
+                    description=f"{message.content}\n**Source**\n[Jump!]({message.jump_url})"
+                )
                 embed.set_author(
-                        name=message.author.display_name,
-                        icon_url=message.author.display_avatar,
-                    )
+                    name=message.author.display_name,
+                    icon_url=message.author.display_avatar,
+                )
                 embed.set_footer(text=str(message.id))
                 sent_msg = await starboard_channel.send(
-                        f":star2: {react_count} {channel.mention}", embed=embed
-                    )
+                    f":star2: {react_count} {channel.mention}", embed=embed
+                )
                 guild_starboard_settings[str(message.id)] = sent_msg.id
                 write_database(data=database)
 
@@ -225,15 +214,14 @@ async def on_raw_reaction_add(payload):
             ...
 
 
-
-@client.event
+@Bot.event
 async def on_message(message):
-    mention = f"<@!{client.user.id}>"
+    mention = f"<@!{Bot.user.id}>"
     if message.content == mention:
         await message.channel.send(
             "Eyoo Nerds my prefix is `>` for help use the command `>help`"
         )
-    await client.process_commands(message)
+    await Bot.process_commands(message)
 
 
 class UrlButton(nextcord.ui.Button):
@@ -277,10 +265,10 @@ class HelpDropdown(nextcord.ui.View):
         select.placeholder = f"{select.values[0]} Help Page"
         if select.values[0] == "Moderation":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Moderation Commands:",
+                title=f"{Bot.user.name} Moderation Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for index, command in enumerate(client.get_cog("Moderation").get_commands()):
+            for index, command in enumerate(Bot.get_cog("Moderation").get_commands()):
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -291,10 +279,10 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
         elif select.values[0] == "Utility":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Utility Commands:",
+                title=f"{Bot.user.name} Utility Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for command in client.get_cog("util").walk_commands():
+            for command in Bot.get_cog("util").walk_commands():
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -305,10 +293,10 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
         elif select.values[0] == "Music":
             embed = nextcord.Embed(
-                title=f"{client.user.name} Music Commands:",
+                title=f"{Bot.user.name} Music Commands:",
                 description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
             )
-            for command in client.get_cog("Music").walk_commands():
+            for command in Bot.get_cog("Music").walk_commands():
                 description = command.description
                 if not description or description is None or description == "":
                     description = "No description"
@@ -319,30 +307,32 @@ class HelpDropdown(nextcord.ui.View):
             await interaction.response.edit_message(embed=embed, view=self)
 
 
-@client.group(invoke_without_command=True)
-async def help(ctx):
-    view = HelpDropdown(ctx.author)
+@Bot.group(invoke_without_command=True)
+async def help(Context):
+    view = HelpDropdown(Context.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Help",
+        title=f"{Bot.user.name} Help",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for more information.",
     )
-    embed.set_thumbnail(url=f"{client.user.display_avatar}")
+    embed.set_thumbnail(url=f"{Bot.user.display_avatar}")
     embed.add_field(
         name="Moderation:", value=f"`{PREFIX}help moderation`", inline=False
     )
     embed.add_field(name="Utility:", value=f"`{PREFIX}help utility`", inline=False)
     embed.add_field(name="Music:", value=f"`{PREFIX}help music`", inline=False)
-    dank_lord = await client.fetch_user(758290177919156244)
+    dank_lord = await Bot.fetch_user(758290177919156244)
     embed.set_footer(
-        text=f"Requested by {ctx.author} | Created by: palp#9999 | Improved by: {dank_lord}",
-        icon_url=f"{ctx.author.display_avatar}",
+        text=f"Requested by {Context.author} | Created by: palp#9999 | Improved by: {dank_lord}",
+        icon_url=f"{Context.author.display_avatar}",
     )
-    await ctx.send(embed=embed, view=view)
+    await Context.send(embed=embed, view=view)
 
 
-@help.command(aliases=['sb','starb'])
-async def starboard(ctx):
-    embed=Embed(title="Help with Starboard", description=f"""
+@help.command(aliases=["sb", "starb"])
+async def starboard(Context):
+    embed = Embed(
+        title="Help with Starboard",
+        description=f"""
 `{PREFIX}starboard setup`
 Setup the starboard!
 
@@ -353,22 +343,23 @@ Toggle the starboard
 Get/Change the starboard channel settings
 
 `{PREFIX}starboard minstars [number]`
-Get/Change the starboard minimum star settings""")
-    await ctx.send(embed=embed)
+Get/Change the starboard minimum star settings""",
+    )
+    await Context.send(embed=embed)
 
 
 @help.command()
-async def moderation(ctx):
-    view = HelpDropdown(ctx.author)
+async def moderation(Context):
+    view = HelpDropdown(Context.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Moderation Commands:",
+        title=f"{Bot.user.name} Moderation Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
     embed = nextcord.Embed(
-        title=f"{client.user.name} Moderation Commands:",
+        title=f"{Bot.user.name} Moderation Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("Moderation").walk_commands():
+    for command in Bot.get_cog("Moderation").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -376,17 +367,17 @@ async def moderation(ctx):
             name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
             value=description,
         )
-    await ctx.send(embed=embed, view=view)
+    await Context.send(embed=embed, view=view)
 
 
 @help.command()
-async def utility(ctx):
-    view = HelpDropdown(ctx.author)
+async def utility(Context):
+    view = HelpDropdown(Context.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Utility Commands:",
+        title=f"{Bot.user.name} Utility Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("util").walk_commands():
+    for command in Bot.get_cog("util").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -394,17 +385,17 @@ async def utility(ctx):
             name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
             value=description,
         )
-    await ctx.send(embed=embed, view=view)
+    await Context.send(embed=embed, view=view)
 
 
 @help.command()
-async def music(ctx):
-    view = HelpDropdown(ctx.author)
+async def music(Context):
+    view = HelpDropdown(Context.author)
     embed = nextcord.Embed(
-        title=f"{client.user.name} Music Commands:",
+        title=f"{Bot.user.name} Music Commands:",
         description=f"Support Server: [Click Here!](https://discord.gg/xA3hBtujg7) || `{PREFIX}help [category]` for other information.",
     )
-    for command in client.get_cog("Music").walk_commands():
+    for command in Bot.get_cog("Music").walk_commands():
         description = command.description
         if not description or description is None or description == "":
             description = "No description"
@@ -412,17 +403,19 @@ async def music(ctx):
             name=f"`{PREFIX}{command.name}{command.signature if command.signature is not None else ''}`",
             value=description,
         )
-    await ctx.send(embed=embed, view=view)
+    await Context.send(embed=embed, view=view)
 
 
-@client.event
+@Bot.event
 async def on_error(error, *args, **kwargs):
     try:
-        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
+        formatted_args = "\n".join(
+            [f"{args.index(arg)+1}) {str(arg)} ({type(arg)})" for arg in args]
+        )
         formatted_args = f"```py\n{formatted_args}```"
         for ERROR_CHANNEL in ERROR_CHANNELS:
             try:
-                error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+                error_channel = await Bot.fetch_channel(int(ERROR_CHANNEL))
             except:
                 print(f"Can't log errors to the channel with id `{ERROR_CHANNEL}`")
                 continue
@@ -445,28 +438,30 @@ async def on_error(error, *args, **kwargs):
         exc = "\n".join(
             traceback.format_exception(exception[0], exception[1], exception[2])
         )
-        formatted_args = '\n'.join([f'{args.index(arg)+1}) {str(arg)} ({type(arg)})' for arg in args])
-        print(exc, "Args: \n"+formatted_args)
+        formatted_args = "\n".join(
+            [f"{args.index(arg)+1}) {str(arg)} ({type(arg)})" for arg in args]
+        )
+        print(exc, "Args: \n" + formatted_args)
 
 
-@client.event
-async def on_command_error(ctx, error):
+@Bot.event
+async def on_command_error(Context, error):
     if isinstance(error, commands.CommandNotFound):
-        cmd = ctx.invoked_with
-        cmds = [cmd.name for cmd in client.commands]
+        cmd = Context.invoked_with
+        cmds = [cmd.name for cmd in Bot.commands]
         matches = get_close_matches(cmd, cmds)
         if len(matches) > 0:
             embed = nextcord.Embed(
                 title="Invalid Command!",
                 description=f"Command `{str(PREFIX)}{cmd}` not found, maybe you meant `{str(PREFIX)}{matches[0]}`?",
             )
-            await ctx.send(embed=embed)
+            await Context.send(embed=embed)
         else:
             embed = nextcord.Embed(
                 title="Invalid Command!",
                 description=f"Please type `{str(PREFIX)}help` to see all commands",
             )
-            await ctx.send(embed=embed)
+            await Context.send(embed=embed)
         return
     if isinstance(error, commands.CommandOnCooldown):
         m, s = divmod(error.retry_after, 60)
@@ -476,26 +471,26 @@ async def on_command_error(ctx, error):
                 title="**Command on cooldown**",
                 description=f"You must wait `{int(s)}` seconds to use this command!",
             )
-            await ctx.send(embed=em)
+            await Context.send(embed=em)
         elif int(h) == 0 and int(m) != 0:
             em = nextcord.Embed(
                 title="**Command on cooldown**",
                 description=f" You must wait `{int(m)}` minutes and `{int(s)}` seconds to use this command!",
             )
-            await ctx.send(embed=em)
+            await Context.send(embed=em)
         else:
             em = nextcord.Embed(
                 title="**Command on cooldown**",
                 description=f" You must wait `{int(h)}` hours, `{int(m)}` minutes and `{int(s)}` seconds to use this command!",
             )
-            await ctx.send(embed=em)
+            await Context.send(embed=em)
         return
     if isinstance(error, commands.DisabledCommand):
         em = nextcord.Embed(
             title="Command Disabled",
             description="It seems the command you are trying to use has been disabled",
         )
-        await ctx.send(embed=em)
+        await Context.send(embed=em)
         return
     if isinstance(error, commands.MissingPermissions):
         missing = [
@@ -508,11 +503,13 @@ async def on_command_error(ctx, error):
             fmt = " and ".join(missing)
         _message = "You require the `{}` permission to use this command.".format(fmt)
         em = nextcord.Embed(title="Invalid Permissions", description=_message)
-        await ctx.send(embed=em)
+        await Context.send(embed=em)
         return
     if isinstance(error, commands.MissingRequiredArgument):
-        embed=Embed(title="Missing Required Arguments!", description=error, color=Color.red())
-        await ctx.send(embed=embed)
+        embed = Embed(
+            title="Missing Required Arguments!", description=error, color=Color.red()
+        )
+        await Context.send(embed=embed)
     if isinstance(error, commands.BotMissingPermissions):
         missing = [
             perm.replace("_", " ").replace("guild", "server").title()
@@ -524,14 +521,14 @@ async def on_command_error(ctx, error):
             fmt = " and ".join(missing)
         _message = "I require the `{}` permission to use this command.".format(fmt)
         em = nextcord.Embed(title="Invalid Permissions", description=_message)
-        await ctx.send(embed=em)
+        await Context.send(embed=em)
         return
     if isinstance(error, commands.BadArgument):
         em = nextcord.Embed(
             title="Bad Argument",
             description="The library ran into an error attempting to parse your argument.",
         )
-        await ctx.send(embed=em)
+        await Context.send(embed=em)
         return
     if isinstance(error, nextcord.NotFound) and "Unknown interaction" in str(error):
         return
@@ -540,15 +537,15 @@ async def on_command_error(ctx, error):
     )
     for ERROR_CHANNEL in ERROR_CHANNELS:
         try:
-            error_channel = await client.fetch_channel(int(ERROR_CHANNEL))
+            error_channel = await Bot.fetch_channel(int(ERROR_CHANNEL))
         except:
             print(f"Can't Fetch The Error Channel With ID: `{ERROR_CHANNEL}`")
             return print(exception)
         error_em = nextcord.Embed(
             title=error.__class__.__name__,
             description=f"""
-Message: ```txt\n{ctx.message.content}```
-Command: {ctx.command}
+Message: ```txt\n{Context.message.content}```
+Command: {Context.command}
 Error Treaceback: ```py\n{exception}```""",
             color=nextcord.Color.red(),
         )
@@ -560,12 +557,13 @@ Error Treaceback: ```py\n{exception}```""",
             )
     em = nextcord.Embed(
         title="Error ;-;",
-        description=f"There was an error in the command `{ctx.command}`\nThe developers have been informed about the error, please refrain from using this command again!",
+        description=f"There was an error in the command `{Context.command}`\nThe developers have been informed about the error, please refrain from using this command again!",
     )
-    await ctx.channel.send(
+    await Context.channel.send(
         embed=em
     )  # Doing this so even when slash commands are implemented, the error handler still works just fine.
     print(exception)
 
 
-client.run(TOKEN)
+if __name__ == "__main__":
+    Bot.run(TOKEN)
