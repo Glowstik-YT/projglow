@@ -1,12 +1,6 @@
 #This Code Is Under The MPL-2.0 License
 
 import nextcord
-from nextcord.colour import Color
-from nextcord.components import Button
-from nextcord.embeds import Embed
-from nextcord.ext import commands
-from nextcord.ext.commands.cooldowns import BucketType
-from nextcord.ui.view import View
 from nextcord.ext import commands
 import json
 from global_functions import ban_msg, kick_msg, BOT_USER_ID, read_database, write_database, PREFIX
