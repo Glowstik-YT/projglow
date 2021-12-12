@@ -3,3 +3,8 @@ DiscordUtils[voice]
 psutil
 requests
 pymongo
+uvloop
+orjson>=3.5.4
+aiodns>=1.1
+cchardet
+Brotli
