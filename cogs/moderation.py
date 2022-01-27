@@ -10,9 +10,19 @@ from difflib import get_close_matches
 
 
 class BanConfirm(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
+    async def interaction_check(self,interaction):
+        if self.ctx.author != interaction.user:
+            await interaction.response.send_message('Not your message', ephemeral=True)
+            return False
+        return True
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(view=self)
+    def __init__(self,ctx,**kwargs):
+        super().__init__(timeout=60,**kwargs)
         self.value = None
+        self.ctx = ctx
 
     @nextcord.ui.button(
         label="Confirm", style=nextcord.ButtonStyle.green, custom_id="yes"
@@ -31,9 +41,19 @@ class BanConfirm(nextcord.ui.View):
         self.stop()
 
 class LockConfirm(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
+    async def interaction_check(self,interaction):
+        if self.ctx.author != interaction.user:
+            await interaction.response.send_message('Not your message', ephemeral=True)
+            return False
+        return True
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(view=self)
+    def __init__(self,ctx,**kwargs):
+        super().__init__(timeout=60,**kwargs)
         self.value = None
+        self.ctx = ctx
 
     @nextcord.ui.button(
         label="Confirm", style=nextcord.ButtonStyle.green, custom_id="yes"
