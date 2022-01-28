@@ -373,6 +373,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   defined by the Mozilla Public License, v. 2.0. """
 
 import time
+from unicodedata import name
 import nextcord
 import os
 import psutil
@@ -385,7 +386,8 @@ from io import BytesIO
 import requests
 from nextcord import ButtonStyle
 from nextcord.ui import button, View, Button
-from nextcord import slash_command, Interaction
+from nextcord import slash_command, Interaction, SlashOption
+from nextcord.abc import GuildChannel
 
 green_button_style = ButtonStyle.success
 grey_button_style = ButtonStyle.secondary
@@ -586,27 +588,27 @@ class util(commands.Cog):
         self.client = client
         self.clientuptime.start()
 
-    @commands.command(description="A handy Calculator!", aliases=["calc"])
-    async def calculator(self, ctx):
-        message = await ctx.send("Loading Calculator....")
+    @slash_command(name="calculator",description="A handy Calculator!")
+    async def calculator(self, interaction:Interaction):
+        message = await interaction.response.send_message("Loading Calculator....")
         embed = nextcord.Embed(
-            title=f"{ctx.author}'s Calculator",
+            title=f"{interaction.user}'s Calculator",
             color=nextcord.Color.green(),
             description="This is the start of the calculator!",
         )
-        view = CalculatorButtons(ctx.author, embed, message)
-        await message.edit(content=None, embed=embed, view=view)
+        view = CalculatorButtons(interaction.author, embed, message)
+        await interaction.response.edit_message(content=None, embed=embed, view=view)
 
-    @commands.command(description="Shows the user's info.")
-    async def userinfo(self, ctx, *, user: nextcord.Member = None):  # b'\xfc'
+    @slash_command(name="userinfo",description="Shows the user's info.")
+    async def userinfo(self, interaction:Interaction, *, user: nextcord.Member = None):  # b'\xfc'
         if user is None:
-            user = ctx.author
+            user = interaction.user
         date_format = "%a, %d %b %Y %I:%M %p"
         embed = nextcord.Embed(color=0xDFA3FF, description=user.mention)
         embed.set_author(name=str(user.name), icon_url=user.display_avatar)
         embed.set_thumbnail(url=user.display_avatar)
         embed.add_field(name="Joined", value=user.joined_at.strftime(date_format))
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
+        members = sorted(interaction.guild.members, key=lambda m: m.joined_at)
         embed.add_field(name="Join position", value=str(members.index(user) + 1))
         embed.add_field(name="Registered", value=user.created_at.strftime(date_format))
         if len(user.roles) > 1:
@@ -627,52 +629,52 @@ class util(commands.Cog):
         embed.set_footer(
             text=self.client.user.name, icon_url=self.client.user.display_avatar
         )
-        return await ctx.send(embed=embed)
+        return await interaction.response.send_message(embed=embed)
 
     @commands.command(description="Shows the server's description.")
-    async def serverinfo(self, ctx):
-        role_count = len(ctx.guild.roles)
-        list_of_bots = [bot.mention for bot in ctx.guild.members if bot.bot]
+    async def serverinfo(self, interaction:Interaction):
+        role_count = len(interaction.guild.roles)
+        list_of_bots = [bot.mention for bot in interaction.guild.members if bot.bot]
 
         embed2 = nextcord.Embed(
-            timestamp=ctx.message.created_at, color=ctx.author.color
+            timestamp=interaction.message.created_at, color=interaction.user.color
         )
-        embed2.add_field(name="Name", value=f"{ctx.guild.name}", inline=False)
+        embed2.add_field(name="Name", value=f"{interaction.guild.name}", inline=False)
         embed2.add_field(
             name="Verification Level",
-            value=str(ctx.guild.verification_level),
+            value=str(interaction.guild.verification_level),
             inline=True,
         )
-        embed2.add_field(name="Highest role", value=ctx.guild.roles[-1], inline=True)
+        embed2.add_field(name="Highest role", value=interaction.guild.roles[-1], inline=True)
         embed2.add_field(name="Number of roles", value=str(role_count), inline=True)
         embed2.add_field(
-            name="Number Of Members", value=ctx.guild.member_count, inline=True
+            name="Number Of Members", value=interaction.guild.member_count, inline=True
         )
         embed2.add_field(
             name="Created At",
-            value=ctx.guild.created_at.__format__("%A, %d. %B %Y @ %H:%M:%S"),
+            value=interaction.guild.created_at.__format__("%A, %d. %B %Y @ %H:%M:%S"),
             inline=True,
         )
         embed2.add_field(name="Bots:", value=(", ".join(list_of_bots)), inline=False)
-        embed2.set_thumbnail(url=ctx.guild.icon.url)
-        embed2.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+        embed2.set_thumbnail(url=interaction.guild.icon.url)
+        embed2.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar)
         embed2.set_footer(
             text=self.client.user.name, icon_url=self.client.user.display_avatar
         )
-        await ctx.send(embed=embed2)
+        await interaction.response.send_message(embed=embed2)
 
-    @commands.command(
-        aliases=["cs", "ci", "channelinfo"], description="Shows the channel's stats."
+    @slash_command(
+        name="channelstats", description="Shows the channel's stats."
     )
-    async def channelstats(self, ctx, channel: nextcord.TextChannel = None):
+    async def channelstats(self, interaction:Interaction, channel: GuildChannel = SlashOption(name="channel",description="The channel to get stats from.",channel_types=[nextcord.ChannelType.text],required=False)):
         if channel == None:
-            channel = ctx.channel
+            channel = interaction.channel
 
         embed = nextcord.Embed(
             title=f"{channel.name}",
             description=f"{'Category - `{}`'.format(channel.category.name) if channel.category else '`This channel is not in a category`'}",
         )
-        embed.add_field(name="Guild", value=ctx.guild.name, inline=True)
+        embed.add_field(name="Guild", value=interaction.guild.name, inline=True)
         embed.add_field(name="Channel Id", value=channel.id, inline=True)
         embed.add_field(
             name="Channel Topic",
@@ -687,17 +689,17 @@ class util(commands.Cog):
             name="Channel Permissions", value=channel.permissions_synced, inline=True
         )
         embed.add_field(name="Channel Hash", value=hash(channel), inline=False)
-        embed.set_thumbnail(url=ctx.guild.icon.url)
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+        embed.set_thumbnail(url=interaction.guild.icon.url)
+        embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar)
         embed.set_footer(
             text=self.client.user.name, icon_url=self.client.user.display_avatar
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(alisas=["adde"], description="Adds an emoji to the server.")
-    async def emojiadd(self, ctx, url: str, *, name):
-        guild = ctx.guild
-        if ctx.author.guild_permissions.manage_emojis:
+    @slash_command(name="emojiadd", description="Adds an emoji to the server.")
+    async def emojiadd(self, interaction:Interaction, url: str, *, name):
+        guild = interaction.guild
+        if interaction.user.guild_permissions.manage_emojis:
             async with aiohttp.ClientSession() as ses:
                 async with ses.get(url) as r:
 
@@ -712,62 +714,62 @@ class util(commands.Cog):
                                 title="Emoji Success",
                                 description=f"Successfully created emoji: <:{name}:{emoji.id}>",
                             )
-                            await ctx.send(embed=em)
+                            await interaction.response.send_message(embed=em)
                             await ses.close()
                         else:
                             em = nextcord.Embed(
                                 title="Emoji Error",
                                 description=f"Error when making request | {r.status} response.",
                             )
-                            await ctx.send(embed=em)
+                            await interaction.response.send_message(embed=em)
                             await ses.close()
 
                     except nextcord.HTTPException:
                         em = nextcord.Embed(
                             title="Emoji Error", description="File size is too big!"
                         )
-                        await ctx.send(embed=em)
+                        await interaction.response.send_message(embed=em)
 
-    @commands.command(
-        alisas=["removee"], description="Removes the specified emoji from the server."
+    @slash_command(
+        name="emojiremove", description="Removes the specified emoji from the server."
     )
-    async def emojiremove(self, ctx, emoji: nextcord.Emoji):
-        guild = ctx.guild
-        if ctx.author.guild_permissions.manage_emojis:
+    async def emojiremove(self, interaction:Interaction, emoji: nextcord.Emoji):
+        guild = interaction.guild
+        if interaction.user.guild_permissions.manage_emojis:
             em = nextcord.Embed(
                 title="Emoji Success",
                 description=f"Successfully deleted (or not :P) {emoji}",
             )
-            await ctx.send(embed=em)
+            await interaction.response.send_message(embed=em)
             await emoji.delete()
 
-    @commands.command(name="toggle", description="Enable or disable a command!")
-    @commands.is_owner()
-    async def toggle(self, ctx, *, command):
-        command = self.client.get_command(command)
+    @slash_command(name="toggle", description="Enable or disable a command!")
+    async def toggle(self, interaction:Interaction, *, command):
+        if interaction.user.id == 744715959817994371:
+            command = self.client.get_command(command)
 
-        if command is None:
-            embed = nextcord.Embed(
-                title="ERROR", description="I can't find a command with that name"
-            )
-            await ctx.send(embed=embed)
+            if command is None:
+                embed = nextcord.Embed(
+                    title="ERROR", description="I can't find a command with that name"
+                )
+                return await interaction.response.send_message(embed=embed)
 
-        elif ctx.command == command:
-            embed = nextcord.Embed(
-                title="ERROR", description="You cannot disable this command "
-            )
-            await ctx.send(embed=embed)
+            elif interaction.command == command:
+                embed = nextcord.Embed(
+                    title="ERROR", description="You cannot disable this command "
+                )
+                return await interaction.response.send_message(embed=embed)
 
-        else:
-            command.enabled = not command.enabled
-            ternary = "enabled" if command.enabled else "disabled"
-            embed = nextcord.Embed(title="Toggle", description=ternary)
-            await ctx.send(embed=embed)
+            else:
+                command.enabled = not command.enabled
+                ternary = "enabled" if command.enabled else "disabled"
+                embed = nextcord.Embed(title="Toggle", description=ternary)
+                return await interaction.response.send_message(embed=embed)
 
-    @commands.command(name="steal", description="Steals an emoji form a server")
-    async def steal(self, ctx, emoji: nextcord.PartialEmoji, *, text=None):
+    @slash_command(name="steal", description="Steals an emoji form a server")
+    async def steal(self, interaction:Interaction, emoji: nextcord.PartialEmoji, *, text=None):
 
-        if ctx.author.guild_permissions.manage_emojis:
+        if interaction.user.guild_permissions.manage_emojis:
 
             if text == None:
                 text = emoji.name
@@ -779,13 +781,13 @@ class util(commands.Cog):
             if emoji.animated == True:
                 open("emoji.gif", "wb").write(r.content)
                 with open("emoji.gif", "rb") as f:
-                    z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
+                    z = await interaction.guild.create_custom_emoji(name=text, image=f.read())
                 os.remove("emoji.gif")
 
             else:
                 open("emoji.png", "wb").write(r.content)
                 with open("emoji.png", "rb") as f:
-                    z = await ctx.guild.create_custom_emoji(name=text, image=f.read())
+                    z = await interaction.guild.create_custom_emoji(name=text, image=f.read())
                 os.remove("emoji.png")
 
             embed = nextcord.Embed(
@@ -793,7 +795,7 @@ class util(commands.Cog):
                 description=f"Succesfully Cloned {z}",
                 color=nextcord.Color.green(),
             )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed)
 
     @slash_command(name="ping",description="Shows the ping of the bot")
     async def ping(self, interaction:Interaction):
@@ -827,12 +829,11 @@ class util(commands.Cog):
         print("waiting...")
         await self.client.wait_until_ready()
 
-    @commands.command(
-        aliases=["statistics", "stat", "statistic"],
+    @slash_command(
+        name="stats",
         description="Shows the bot's statistics",
     )
-    @commands.cooldown(1, 15, commands.BucketType.user)
-    async def stats(self, ctx):
+    async def stats(self, interaction:Interaction):
         global ud, um, uh, us
         em = nextcord.Embed(title="How long have I been up?")
         em.add_field(name="Days:", value=ud, inline=False)
@@ -844,9 +845,9 @@ class util(commands.Cog):
             name="RAM usage:", value=f"{psutil.virtual_memory()[2]}%", inline=False
         )
         em.set_footer(
-            text=f"Stats requested by: {ctx.author}", icon_url=ctx.author.display_avatar
+            text=f"Stats requested by: {interaction.user}", icon_url=interaction.user.display_avatar
         )
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
 
 def setup(client):
