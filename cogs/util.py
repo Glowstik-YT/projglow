@@ -385,6 +385,7 @@ from io import BytesIO
 import requests
 from nextcord import ButtonStyle
 from nextcord.ui import button, View, Button
+from nextcord import slash_command, Interaction
 
 green_button_style = ButtonStyle.success
 grey_button_style = ButtonStyle.secondary
@@ -794,17 +795,16 @@ class util(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-    @commands.command(description="Shows the ping of the bot")
-    @commands.cooldown(1, 15, commands.BucketType.user)
-    async def ping(self, ctx):
+    @slash_command(name="ping",description="Shows the ping of the bot")
+    async def ping(self, interaction:Interaction):
         em = nextcord.Embed(title="Pong!🏓", colour=nextcord.Colour.random())
         em.add_field(
             name="My API Latency is:", value=f"{round(self.client.latency*1000)} ms!"
         )
         em.set_footer(
-            text=f"Ping requested by {ctx.author}", icon_url=ctx.author.display_avatar
+            text=f"Ping requested by {interaction.user}", icon_url=interaction.user.display_avatar
         )
-        await ctx.send(embed=em)
+        await interaction.response.send_message(embed=em)
 
 
 
