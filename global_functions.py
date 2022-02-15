@@ -60,6 +60,9 @@ people_list = [
     "Your family who is really unhappy with you because your let everyone down by becoming a redditor",
     "Your imaginary gf :rofl:",
     "the street",
+    "very cool",
+    "bee",
+    "sham",
 ]
 
 ban_msg = [
