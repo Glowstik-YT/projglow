@@ -1,15 +1,18 @@
-#Script Taken From https://github.com/nextcord/previous
+#Script Inspired by https://github.com/nextcord/previous
+
 import io
 import os
 import re
 import zlib
 from typing import Dict
-
 import nextcord as discord
 from nextcord.ext import commands
-
 from .extras import fuzzy
 
+class MakeLinkBtn(discord.ui.View):
+    def __init__(self, link: str, text: str):
+        super().__init__()
+        self.add_item(discord.ui.Button(label=text, url=link))
 
 class SphinxObjectFileReader:
     # Inspired by Sphinx's InventoryFileReader
@@ -85,11 +88,15 @@ class Rtfm(commands.Cog):
 
             if projname == "nextcord":
                 key = key.replace("nextcord.ext.commands.", "").replace("nextcord.", "")
-
+            if projname == "pycord":
+                key = key.replace("discord.ext.commands.", "").replace("discord.", "")
+            if projname == "disnake":
+                key = key.replace("disnake.ext.commands.", "").replace("disnake.", "")
+            if projname == "discord":
+                key = key.replace("discord.ext.commands.", "").replace("discord.", "")
             result[f"{prefix}{key}"] = os.path.join(url, location)
-
         return result
-
+        
     async def build_rtfm_lookup_table(self, page_types):
         cache = {}
         for key, page in page_types.items():
@@ -108,7 +115,11 @@ class Rtfm(commands.Cog):
     async def do_rtfm(self, ctx, key, obj):
         page_types = {
             "python": "https://docs.python.org/3",
-            "master": "https://nextcord.readthedocs.io/en/latest",
+            "master": "https://docs.nextcord.dev/en/latest/",
+            "disnake": "https://docs.disnake.dev/en/latest/",
+            "pycord": "https://docs.pycord.dev/en/master/",
+            "discord": "https://discordpy.readthedocs.io/en/stable/",
+            
         }
 
         if obj is None:
@@ -121,6 +132,7 @@ class Rtfm(commands.Cog):
 
         obj = re.sub(r"^(?:discord\.(?:ext\.)?)?(?:commands\.)?(.+)", r"\1", obj)
         obj = re.sub(r"^(?:nextcord\.(?:ext\.)?)?(?:commands\.)?(.+)", r"\1", obj)
+        obj = re.sub(r"^(?:disnake\.(?:ext\.)?)?(?:commands\.)?(.+)", r"\1", obj)
 
         if key.startswith("master"):
             # point the abc.Messageable types properly:
@@ -138,21 +150,18 @@ class Rtfm(commands.Cog):
             return tup[0]
 
         matches = fuzzy.finder(obj, cache, key=lambda t: t[0], lazy=False)[:8]
-
-        e = discord.Embed(colour=discord.Colour.blurple())
+        e = discord.Embed(title="RTFM")
         if len(matches) == 0:
             return await ctx.send("Could not find anything. Sorry.")
-
+        linkView = MakeLinkBtn(text=matches[0][0], link=matches[0][1])
         e.description = "\n".join(f"[`{key}`]({url})" for key, url in matches)
         ref = ctx.message.reference
         refer = None
         if ref and isinstance(ref.resolved, discord.Message):
             refer = ref.resolved.to_reference()
-        await ctx.send(embed=e, reference=refer)
+        await ctx.reply(embed=e, reference=refer, view=linkView)
 
-    @commands.group(
-        name="rtfm", help="python docs", aliases=["rtfd"], invoke_without_command=True
-    )
+    @commands.group(name="rtfm", help="python docs", aliases=["rtfd", "docs"], invoke_without_command=True)
     async def rtfm_group(self, ctx: commands.Context, *, obj: str = None):
         await self.do_rtfm(ctx, "master", obj)
 
@@ -160,13 +169,25 @@ class Rtfm(commands.Cog):
     async def rtfm_python_cmd(self, ctx: commands.Context, *, obj: str = None):
         await self.do_rtfm(ctx, "python", obj)
 
+    @rtfm_group.command(name="pycord", aliases=["pyc"])
+    async def rtfm_pycord_cmd(self, ctx: commands.Context, *, obj: str = None):
+        await self.do_rtfm(ctx, "pycord", obj)
+
+    @rtfm_group.command(name="disnake", aliases=["dis"])
+    async def rtfm_disnake_cmd(self, ctx: commands.Context, *, obj: str = None):
+        await self.do_rtfm(ctx, "disnake", obj)
+
+    @rtfm_group.command(name="discord", aliases=["dpy"])
+    async def rtfm_discord_cmd(self, ctx: commands.Context, *, obj: str = None):
+        await self.do_rtfm(ctx, "discord", obj)
+
     @commands.command(
         help="delete cache of rtfm (owner only)", aliases=["purge-rtfm", "delrtfm"]
     )
     @commands.is_owner()
     async def rtfmcache(self, ctx: commands.Context):
         del self._rtfm_cache
-        embed = discord.Embed(title="Purged rtfm cache.", color=discord.Color.blurple())
+        embed = discord.Embed(title="Purged rtfm cache.")
         await ctx.send(embed=embed)
 
 
