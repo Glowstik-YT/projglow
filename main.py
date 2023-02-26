@@ -78,6 +78,24 @@ def apiReq(id, responseMSG):
 
     return data
 
+@client.event
+async def on_ready():
+    print(f'{bot.user} Poggers')
+
+    # Start the loop to change the presence every 10 seconds
+    change_presence.start()
+
+@tasks.loop(seconds=10)
+async def change_presence():
+    presences = [
+        'with Glowstik',
+        'Minecraft',
+        'Valorant',
+        'with FrameWrk',
+        'https://discord.gg/glowstik'
+    ]
+    presence = discord.Activity(type=discord.ActivityType.playing, name=random.choice(presences))
+    await bot.change_presence(activity=presence)
 
 @client.command()
 async def chat(ctx, *, responseMSG):
